@@ -34,6 +34,9 @@
           "pages": [
             "page/home/home"
           ]
+        },
+        "app-service": {
+          "services": ["app-service/guard-service"]
         }
       },
       "platforms": [

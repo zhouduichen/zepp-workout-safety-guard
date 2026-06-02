@@ -45,8 +45,31 @@ if (!existsSync(appJsonPath)) {
     const permissions = config.permissions;
     if (permissions && Array.isArray(permissions) && permissions.length > 0) {
       pass(`permissions list has ${permissions.length} entry(ies)`);
+      if (permissions.includes('device:os.bg_service')) {
+        pass('background service permission declared');
+      } else {
+        fail('device:os.bg_service permission is missing');
+      }
     } else {
       fail('permissions list is empty or missing');
+    }
+
+    // 5. App Service declaration
+    const appService = config.targets?.gt?.module?.['app-service'];
+    if (appService && appService.services && Array.isArray(appService.services) && appService.services.length > 0) {
+      pass(`app-service has ${appService.services.length} service(s)`);
+    } else {
+      fail('app-service.services is missing or empty');
+    }
+
+    // 6. No forbidden permissions
+    if (permissions && Array.isArray(permissions)) {
+      const forbidden = ['device:sensor.accelerometer', 'device:sensor.gyroscope', 'data:os.location'];
+      for (const f of forbidden) {
+        if (permissions.includes(f)) {
+          fail(`forbidden permission in app.json: ${f} (App Service cannot use high-power sensors)`);
+        }
+      }
     }
   } catch (e) {
     fail(`app.json is not valid JSON: ${e.message}`);
