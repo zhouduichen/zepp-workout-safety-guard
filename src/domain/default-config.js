@@ -1,0 +1,18 @@
+export const developmentConfig = Object.freeze({
+  activityEvidenceWindowSec: 120,
+  standbyReturnSec: 600,
+  intensitySustainSec: 180,
+  suddenStopSec: 30,
+  ordinaryStopPromptSec: 180,
+  ordinaryStopHelpSec: 600,
+  notWornPromptSec: 300,
+  restPauseSec: 600,
+  highRiskConfirmSec: 30,
+  mediumRiskConfirmSec: 60,
+  safeCooldownSec: 300,
+  minHeartRateSamples: 3,
+  intensityAlertBpm: 170,
+  highRiskCandidateBpm: 190,
+  autoContactDispatch: false,
+  dispatcherMode: 'demo',
+})

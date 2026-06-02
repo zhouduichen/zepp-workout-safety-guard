@@ -2,7 +2,7 @@
   "name": "workout-safety-guard",
   "version": "1.0.0",
   "description": "运动异常守护 - Zepp OS workout safety guard",
-  "main": "app.js",
+  "type": "module",
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "validate": "node scripts/validate-project.mjs",
