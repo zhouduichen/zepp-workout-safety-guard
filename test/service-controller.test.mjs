@@ -350,4 +350,152 @@ describe('service-controller', () => {
       assert.equal(alarm.scheduled[0].delaySec, developmentConfig.highRiskConfirmSec)
     })
   })
+
+  describe('event history', () => {
+    it('getHistory returns empty array initially', () => {
+      const ctrl = createController()
+      const history = ctrl.getHistory()
+      assert.ok(Array.isArray(history))
+      assert.equal(history.length, 0)
+    })
+
+    it('recordHelpRequestEntry adds a history entry', () => {
+      bridge._setConnected(true)
+      const ctrl = createController()
+
+      ctrl.recordHelpRequestEntry({
+        messageId: 'evt-1000-0001',
+        trigger: 'manual',
+        occurredAtMs: 1000,
+        hasLocation: false,
+        isReplayed: false,
+      })
+
+      const history = ctrl.getHistory()
+      assert.equal(history.length, 1)
+      assert.equal(history[0].eventId, 'evt-1000-0001')
+      assert.equal(history[0].trigger, 'manual')
+      assert.equal(history[0].status, 'acknowledged')
+    })
+
+    it('recordHelpRequestEntry for offline marks status as queued', () => {
+      bridge._setConnected(false)
+      const ctrl = createController()
+
+      ctrl.recordHelpRequestEntry({
+        messageId: 'evt-2000-0001',
+        trigger: 'automatic_high_risk',
+        occurredAtMs: 2000,
+        hasLocation: true,
+        isReplayed: false,
+      })
+
+      const history = ctrl.getHistory()
+      assert.equal(history.length, 1)
+      assert.equal(history[0].status, 'queued')
+      assert.equal(history[0].hasLocation, true)
+    })
+
+    it('getHistory returns newest first', () => {
+      bridge._setConnected(true)
+      const ctrl = createController()
+
+      ctrl.recordHelpRequestEntry({
+        messageId: 'evt-1000-0001',
+        trigger: 'automatic_high_risk',
+        occurredAtMs: 1000,
+        hasLocation: false,
+        isReplayed: false,
+      })
+      ctrl.recordHelpRequestEntry({
+        messageId: 'evt-2000-0001',
+        trigger: 'manual',
+        occurredAtMs: 2000,
+        hasLocation: false,
+        isReplayed: false,
+      })
+
+      const history = ctrl.getHistory()
+      assert.equal(history.length, 2)
+      assert.equal(history[0].eventId, 'evt-2000-0001')
+      assert.equal(history[1].eventId, 'evt-1000-0001')
+    })
+
+    it('clearHistory empties the event list', () => {
+      bridge._setConnected(true)
+      const ctrl = createController()
+
+      ctrl.recordHelpRequestEntry({
+        messageId: 'evt-1000-0001',
+        trigger: 'manual',
+        occurredAtMs: 1000,
+        hasLocation: false,
+        isReplayed: false,
+      })
+      assert.equal(ctrl.getHistory().length, 1)
+
+      ctrl.clearHistory()
+      assert.equal(ctrl.getHistory().length, 0)
+    })
+
+    it('replayed flag is recorded correctly', () => {
+      bridge._setConnected(true)
+      const ctrl = createController()
+
+      ctrl.recordHelpRequestEntry({
+        messageId: 'evt-1000-0001',
+        trigger: 'manual',
+        occurredAtMs: 1000,
+        hasLocation: false,
+        isReplayed: true,
+      })
+
+      const history = ctrl.getHistory()
+      assert.equal(history[0].replayed, true)
+    })
+  })
+
+  describe('triggerResolved', () => {
+    it('marks unresolved help as resolved', () => {
+      bridge._setConnected(true)
+      const ctrl = createController()
+
+      ctrl.recordHelpRequestEntry({
+        messageId: 'evt-1000-0001',
+        trigger: 'manual',
+        occurredAtMs: 1000,
+        hasLocation: false,
+        isReplayed: false,
+      })
+
+      assert.equal(ctrl.getHistory()[0].status, 'acknowledged')
+
+      ctrl.triggerResolved()
+      assert.equal(ctrl.getHistory()[0].status, 'resolved')
+    })
+
+    it('does not duplicate resolution on repeated calls', () => {
+      bridge._setConnected(true)
+      const ctrl = createController()
+
+      ctrl.handleInput({ type: InputType.USER_HELP_NOW, atMs: 2000, payload: {} })
+      const helpCount = ctrl.getOutbox().entries.filter(e => e.envelope.type === 'help.requested').length
+      assert.equal(helpCount, 1)
+
+      ctrl.triggerResolved()
+
+      // Second call must not add another resolution
+      ctrl.triggerResolved()
+      const resCount = ctrl.getOutbox().entries.filter(e => e.envelope.type === 'help.resolved').length
+      assert.equal(resCount, 1)
+    })
+
+    it('does not enqueue resolution if no help was sent', () => {
+      const ctrl = createController()
+      ctrl.triggerResolved()
+
+      const resCount = ctrl.getOutbox().entries.filter(e => e.envelope.type === 'help.resolved').length
+      assert.equal(resCount, 0)
+    })
+  })
 })

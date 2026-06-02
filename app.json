@@ -32,11 +32,28 @@
       "module": {
         "page": {
           "pages": [
-            "page/home/home"
+            "page/home/home",
+            "page/onboarding/onboarding",
+            "page/assist/assist",
+            "page/history/history"
           ]
         },
         "app-service": {
           "services": ["app-service/guard-service"]
+        },
+        "secondary-widget": {
+          "widgets": [{
+            "path": "secondary-widget/index",
+            "route": "page/assist/assist",
+            "icon": "icon.png",
+            "preview": "secondary-preview.png"
+          }]
+        },
+        "app-side": {
+          "path": "app-side/index"
+        },
+        "setting": {
+          "path": "setting/index"
         }
       },
       "platforms": [

@@ -83,6 +83,7 @@
 | `secondary-widget` in `app.json` | DOCUMENTED | `module["secondary-widget"]: { widgets }` schema |
 | `SecondaryWidget({ state, onInit, build, onResume, onPause, onDestroy })` | DOCUMENTED | Official type declarations |
 | Route to page/assist/assist from widget | DOCUMENTED | `SecondaryWidget` can use `push()` from `@zos/router` |
+| Preview images in `assets/gt.r/` and `assets/gt.s/` | DOCUMENTED | Official asset convention for widget preview |
 | **Widget UI drawing APIs** | TRUE_DEVICE_REQUIRED | Widget has limited UI API surface; needs hardware test |
 | **Interaction reliability** | TRUE_DEVICE_REQUIRED | Tap detection on negative-one-screen |
 
@@ -129,7 +130,7 @@
 
 | Status | Count | Notes |
 |---|---|---|
-| DOCUMENTED | 30 | Core capabilities established by official docs |
+| DOCUMENTED | 32 | Core capabilities established by official docs |
 | SIMULATOR_CONFIRMED | 1 | Side Service constructor pattern |
 | TRUE_DEVICE_REQUIRED | 7 | BLE handoff, alarm accuracy, notification actions, GPS, audio fallback, widget |
 | NOT_SUPPORTED | 1 | SystemSounds at API_LEVEL 3.0 |

@@ -41,3 +41,34 @@ export function loadOutbox() {
     return null
   }
 }
+
+// ---------------------------------------------------------------------------
+// Event history persistence
+// ---------------------------------------------------------------------------
+
+const HISTORY_KEY = 'guard_history'
+const MAX_HISTORY_ENTRIES = 20
+
+export function saveEventHistory(entries) {
+  try {
+    // Trim to max
+    const trimmed = entries.slice(0, MAX_HISTORY_ENTRIES)
+    const json = JSON.stringify(trimmed)
+    _storage.setItem(HISTORY_KEY, json)
+  } catch {}
+}
+
+export function loadEventHistory() {
+  try {
+    const raw = _storage.getItem(HISTORY_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+export function clearEventHistory() {
+  try {
+    _storage.setItem(HISTORY_KEY, '[]')
+  } catch {}
+}
