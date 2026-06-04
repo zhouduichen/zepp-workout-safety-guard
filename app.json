@@ -1,7 +1,7 @@
 {
   "configVersion": "v3",
   "app": {
-    "appId": 9999999,
+    "appId": 9999998,
     "appName": "WorkoutSafetyGuard",
     "appType": "app",
     "version": {
@@ -17,6 +17,7 @@
     "device:os.local_storage",
     "data:user.hd.heart_rate",
     "data:user.hd.distance",
+    "device:os.geolocation",
     "device:os.bg_service"
   ],
   "runtime": {

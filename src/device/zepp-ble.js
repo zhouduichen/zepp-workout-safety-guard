@@ -2,8 +2,8 @@
  * Zepp OS BLE bridge adapter.
  * Wraps @zos/ble for sending UTF-8 envelope bytes to phone Side Service.
  *
- * This adapter is a thin placeholder. The GATT service/characteristic UUIDs
- * must be agreed with the phone Side Service implementation.
+ * The GATT service/characteristic IDs must be agreed with the phone Side
+ * Service implementation. Without them, send() fails closed.
  *
  * BLE connection management (mstConnect/mstDisconnect) is handled by the
  * Zepp App — this adapter assumes an existing connection and focuses on
@@ -20,17 +20,23 @@ try {
 let _isConnected = false
 let _connectId = null
 
-export function createBleAdapter() {
+export function createBleAdapter(options = {}) {
+  const ble = options.ble || _ble
+  const logger = options.logger || _logger
+  const serviceId = options.serviceId
+  const characteristicId = options.characteristicId
+  const decoder = options.textDecoder || (typeof TextDecoder !== 'undefined' ? new TextDecoder() : null)
+
   /**
    * Register BLE notification listener for incoming ACK messages.
    * @param {function} callback - called with decoded envelope objects
    */
   function onAcknowledged(callback) {
-    if (!_ble) return
+    if (!ble || typeof ble.mstOnCharaNotification !== 'function' || !decoder) return
     try {
-      _ble.mstOnCharaNotification((connectId, svcId, charaId, value) => {
+      ble.mstOnCharaNotification((connectId, svcId, charaId, value) => {
         try {
-          const json = new TextDecoder().decode(value)
+          const json = decoder.decode(value)
           const envelope = JSON.parse(json)
           if (envelope.type === 'sync.ack') {
             callback(envelope)
@@ -46,14 +52,14 @@ export function createBleAdapter() {
    * @returns {boolean} true if send was attempted
    */
   function send(bytes) {
-    if (!_ble || !_connectId) return false
+    if (!ble || !_connectId || !serviceId || !characteristicId) return false
     try {
-      // Write to agreed characteristic UUIDs
-      // _ble.mstWriteCharacteristic(_connectId, svcId, charaId, bytes)
-      if (_logger) _logger.log('ble send:', bytes.length, 'bytes')
+      if (typeof ble.mstWriteCharacteristic !== 'function') return false
+      ble.mstWriteCharacteristic(_connectId, serviceId, characteristicId, bytes)
+      if (logger) logger.log('ble send:', bytes.length, 'bytes')
       return true
     } catch (e) {
-      if (_logger) _logger.log('ble send failed')
+      if (logger) logger.log('ble send failed')
       _isConnected = false
       return false
     }
@@ -73,9 +79,9 @@ export function createBleAdapter() {
   }
 
   function disconnect() {
-    if (_connectId != null && _ble) {
+    if (_connectId != null && ble) {
       try {
-        _ble.mstDisconnect(_connectId)
+        ble.mstDisconnect(_connectId)
       } catch {}
     }
     _connectId = null
@@ -83,8 +89,8 @@ export function createBleAdapter() {
   }
 
   function cleanup() {
-    if (_ble) {
-      try { _ble.mstOffAllCb() } catch {}
+    if (ble) {
+      try { ble.mstOffAllCb() } catch {}
     }
     _connectId = null
     _isConnected = false

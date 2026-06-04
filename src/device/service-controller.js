@@ -24,10 +24,15 @@ export function createServiceController({ config, storage, alerts, alarm, bridge
     guardState = storage.loadGuardState() || createInitialGuardState(now())
     outbox = storage.loadOutbox() || createEmptyOutbox()
     eventHistory = loadEventHistory()
+    if (bridge && typeof bridge.onAcknowledged === 'function') {
+      bridge.onAcknowledged(handleAcknowledgement)
+    }
   }
 
   function stop() {
-    // no-op for now
+    if (bridge && typeof bridge.cleanup === 'function') {
+      bridge.cleanup()
+    }
   }
 
   function persist() {
@@ -50,6 +55,28 @@ export function createServiceController({ config, storage, alerts, alarm, bridge
     if (idx !== -1) {
       eventHistory[idx] = { ...eventHistory[idx], ...updates }
     }
+  }
+
+  function acknowledgeHistory(messageId) {
+    const idx = eventHistory.findIndex(e => e.eventId === messageId)
+    if (idx !== -1 && eventHistory[idx].status === 'queued') {
+      eventHistory[idx] = { ...eventHistory[idx], status: 'acknowledged' }
+    }
+  }
+
+  function handleAcknowledgement(envelope) {
+    if (!envelope || envelope.type !== 'sync.ack') return
+
+    const ackMessageId = envelope.payload?.ackMessageId
+    if (typeof ackMessageId !== 'string' || ackMessageId.length === 0) return
+
+    const acknowledgedAtMs = Number.isFinite(envelope.occurredAtMs)
+      ? envelope.occurredAtMs
+      : now()
+
+    outbox = acknowledge(outbox, ackMessageId, acknowledgedAtMs)
+    acknowledgeHistory(ackMessageId)
+    persist()
   }
 
   function findHelpRequestEnvelopes() {

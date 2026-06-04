@@ -245,6 +245,25 @@ describe('assist-controller', () => {
       assert.equal(helpSentPayload.hasLocation, true)
     })
 
+    it('sends the first help event before a pre-acquired location update', () => {
+      const calls = []
+      const ctrl = createAssistController({
+        now: clock.now,
+        setTimeout: clock.setTimeout,
+        clearTimeout: clock.clearTimeout,
+        onCountdownChange: () => {},
+        onHelpSent: () => { calls.push('help') },
+        onLocationAvailable: () => { calls.push('location') },
+        onCancelled: () => {},
+      })
+
+      ctrl.start()
+      ctrl.locationUpdate(39.9042, 116.4074)
+      clock._fireTicks(30)
+
+      assert.deepEqual(calls, ['help', 'location'])
+    })
+
     it('locationUpdate after cancellation is ignored', () => {
       const ctrl = createController()
       ctrl.start()

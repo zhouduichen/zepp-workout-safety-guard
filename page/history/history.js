@@ -2,7 +2,14 @@ import { createWidget, widget, prop, align, text_style } from "@zos/ui";
 import { px } from "@zos/utils";
 import * as Styles from "zosLoader:./history.[pf].layout.js";
 import * as Common from "zosLoader:./../common.[pf].layout.js";
-import { loadEventHistory, clearEventHistory } from "../../src/device/storage.js";
+import {
+  loadOutbox,
+  saveOutbox,
+  loadEventHistory,
+  saveEventHistory,
+  clearEventHistory,
+} from "../../src/device/storage.js";
+import { resolveLatestHelp } from "../../src/pages/assist-session.js";
 
 Page({
   state: {},
@@ -130,7 +137,10 @@ Page({
   },
 
   _onMarkSafe() {
-    // Record resolution and go back
+    resolveLatestHelp({
+      storage: { loadOutbox, saveOutbox, loadEventHistory, saveEventHistory },
+      now: () => Date.now(),
+    });
     const { finish } = require("@zos/router");
     finish();
   },

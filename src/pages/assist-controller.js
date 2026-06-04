@@ -45,6 +45,7 @@ export function createAssistController({
   let timerId = null
   let _helpSent = false
   let _hasLocation = false
+  let _lastLocation = null
 
   // -----------------------------------------------------------------------
   // Internal helpers
@@ -74,6 +75,9 @@ export function createAssistController({
     state = AssistState.HELP_SENT
     cancelTimer()
     onHelpSent({ hasLocation: _hasLocation })
+    if (_lastLocation) {
+      onLocationAvailable(_lastLocation.lat, _lastLocation.lng)
+    }
   }
 
   // -----------------------------------------------------------------------
@@ -86,6 +90,7 @@ export function createAssistController({
     remaining = 30
     _helpSent = false
     _hasLocation = false
+    _lastLocation = null
     timerId = setTimeout(tick, 1000)
     onCountdownChange(remaining)
   }
@@ -133,6 +138,7 @@ export function createAssistController({
    */
   function locationUpdate(lat, lng) {
     _hasLocation = true
+    _lastLocation = { lat, lng }
     if (state === AssistState.CANCELLED) return
     if (_helpSent) {
       onLocationAvailable(lat, lng)

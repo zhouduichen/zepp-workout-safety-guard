@@ -51,12 +51,20 @@ function createFakeAlarm() {
 function createFakeBridge(initialConnected = false) {
   let connected = initialConnected
   const sent = []
+  let ackHandler = null
+  let cleanupCount = 0
   return {
     isConnected: () => connected,
     send: (bytes) => { sent.push(bytes) },
+    onAcknowledged: (callback) => { ackHandler = callback },
+    cleanup: () => { cleanupCount += 1; ackHandler = null; connected = false },
+    _emitAck: (envelope) => {
+      if (ackHandler) ackHandler(envelope)
+    },
     _setConnected: (v) => { connected = v },
     sent,
-    _reset: () => { sent.length = 0; connected = initialConnected },
+    _cleanupCount: () => cleanupCount,
+    _reset: () => { sent.length = 0; connected = initialConnected; ackHandler = null; cleanupCount = 0 },
   }
 }
 
@@ -110,6 +118,18 @@ describe('service-controller', () => {
       const ctrl = createController()
       assert.equal(ctrl.getState().status, GuardStatus.ACTIVE_GUARD)
       assert.equal(ctrl.getState()._createdAtMs, 5000)
+    })
+  })
+
+  describe('stop', () => {
+    it('cleans up bridge callbacks and connection state', () => {
+      bridge._setConnected(true)
+      const ctrl = createController()
+
+      ctrl.stop()
+
+      assert.equal(bridge._cleanupCount(), 1)
+      assert.equal(bridge.isConnected(), false)
     })
   })
 
@@ -257,6 +277,45 @@ describe('service-controller', () => {
       // Reload
       const ctrl2 = createController()
       assert.equal(listPending(ctrl2.getOutbox()).length, 0)
+    })
+
+    it('acknowledges pending delivery from bridge callback', () => {
+      bridge._setConnected(false)
+      const ctrl = createController()
+      ctrl.handleInput({ type: InputType.USER_HELP_NOW, atMs: 2000, payload: {} })
+      assert.equal(listPending(ctrl.getOutbox()).length, 1)
+
+      const msgId = ctrl.getOutbox().entries[0].envelope.messageId
+      bridge._emitAck({
+        schemaVersion: 1,
+        messageId: `ack-${msgId}`,
+        type: 'sync.ack',
+        occurredAtMs: 3000,
+        payload: { ackMessageId: msgId },
+      })
+
+      assert.equal(listPending(ctrl.getOutbox()).length, 0)
+      assert.equal(storage.loadOutbox().entries[0].acknowledgedAtMs, 3000)
+    })
+
+    it('does not downgrade resolved history when a help ack arrives late', () => {
+      bridge._setConnected(false)
+      const ctrl = createController()
+      ctrl.handleInput({ type: InputType.USER_HELP_NOW, atMs: 2000, payload: {} })
+      const msgId = ctrl.getOutbox().entries[0].envelope.messageId
+
+      ctrl.triggerResolved()
+      assert.equal(ctrl.getHistory()[0].status, 'resolved')
+
+      bridge._emitAck({
+        schemaVersion: 1,
+        messageId: `ack-${msgId}`,
+        type: 'sync.ack',
+        occurredAtMs: 3000,
+        payload: { ackMessageId: msgId },
+      })
+
+      assert.equal(ctrl.getHistory()[0].status, 'resolved')
     })
   })
 

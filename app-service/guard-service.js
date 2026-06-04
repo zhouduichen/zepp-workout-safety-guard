@@ -19,7 +19,6 @@
  * - No UI APIs (createWidget, etc.)
  */
 
-import { AppService } from '@zeppos/zml/app-service'
 import { log as logger } from '@zos/utils'
 
 import { developmentConfig } from '../src/domain/default-config.js'
