@@ -1,7 +1,7 @@
 import { createWidget, widget, prop } from "@zos/ui";
 import * as Styles from "zosLoader:./assist.[pf].layout.js";
 import * as Common from "zosLoader:./../common.[pf].layout.js";
-import { createAssistController } from "../../src/pages/assist-controller.js";
+import { AssistState, createAssistController } from "../../src/pages/assist-controller.js";
 import { createAssistSession } from "../../src/pages/assist-session.js";
 import {
   loadOutbox,
@@ -146,7 +146,7 @@ Page({
       },
       onHelpSent: (payload) => this._onHelpSent(payload),
       onLocationAvailable: (lat, lng) => this._onLocationAvailable(lat, lng),
-      onCancelled: () => this._finishSafely(),
+      onCancelled: () => this._finishCancelled(),
     });
 
     this.state._assistController.start();
@@ -243,7 +243,12 @@ Page({
   },
 
   _onCancelTap() {
-    if (this.state._assistController?.getState?.() === "HELP_SENT") {
+    const currentState = this.state._assistController?.getState?.();
+    if (
+      currentState === AssistState.HELP_SENT ||
+      currentState === AssistState.CANCELLED ||
+      currentState == null
+    ) {
       this._finishSafely();
       return;
     }
@@ -260,7 +265,7 @@ Page({
     if (this.state._assistController) {
       this.state._assistController.confirmCancel();
     } else {
-      this._finishSafely();
+      this._finishCancelled();
     }
   },
 
@@ -281,6 +286,17 @@ Page({
       const { launchApp, SYSTEM_APP_PHONE } = require("@zos/router");
       launchApp({ appId: SYSTEM_APP_PHONE });
     } catch {}
+  },
+
+  _finishCancelled() {
+    this._stopGps();
+    this._setWidgetText(this.state._connLabel, "Request cancelled");
+    this._setWidgetText(this.state._cancelBtn, "Close");
+    this._setEnabled(this.state._cancelBtn, true);
+    this.state._confirmWrapper?.setEnable(false);
+    this.state._confirmYesBtn?.setEnable(false);
+    this.state._confirmNoBtn?.setEnable(false);
+    this._leaveAssistPage();
   },
 
   _updateCountdownDisplay() {
@@ -307,10 +323,30 @@ Page({
 
   _finishSafely() {
     this._stopGps();
+    this._leaveAssistPage();
+  },
+
+  _leaveAssistPage() {
     try {
-      const { finish } = require("@zos/router");
-      finish();
-    } catch {}
+      const router = require("@zos/router");
+      if (typeof router.back === "function") {
+        router.back();
+        return;
+      }
+      if (typeof router.replace === "function") {
+        router.replace({ url: "/page/home/home" });
+        return;
+      }
+      if (typeof router.finish === "function") {
+        router.finish();
+        return;
+      }
+      if (typeof router.push === "function") {
+        router.push({ url: "/page/home/home" });
+      }
+    } catch (e) {
+      console.log("Assist leave failed: " + (e.message || String(e)));
+    }
   },
 
   onDestroy() {
