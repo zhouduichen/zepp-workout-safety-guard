@@ -64,7 +64,7 @@ Use this checklist when validating on a physical Zepp OS watch (API_LEVEL 3.0+).
 
 ## GPS (Foreground Only)
 
-- [ ] GPS starts when assist page opens
+- [ ] GPS starts only after help is sent from the foreground assist page
 - [ ] GPS does not block help delivery
 - [ ] GPS timeout handled gracefully
 - [ ] GPS stopped on page close (onDestroy)

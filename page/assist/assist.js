@@ -150,10 +150,11 @@ Page({
     });
 
     this.state._assistController.start();
-    this._startGps();
   },
 
   _startGps() {
+    if (this.state._geo || this.state._gpsTimeoutId != null) return;
+
     try {
       const sensor = require("@zos/sensor");
       const Geolocation = sensor.Geolocation;
@@ -234,6 +235,7 @@ Page({
     this._setWidgetText(this.state._connLabel, "Help queued");
     this._setEnabled(this.state._contactBtn, false);
     this._setWidgetText(this.state._cancelBtn, "Close");
+    this._startGps();
   },
 
   _onLocationAvailable(lat, lng) {
