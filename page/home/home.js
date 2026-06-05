@@ -16,7 +16,7 @@ import { LocalStorage } from "@zos/storage";
 // Localization copy (Chinese)
 // ---------------------------------------------------------------------------
 
-export const ZH = Object.freeze({
+const ZH = Object.freeze({
   TITLE: "运动异常守护",
   GUARD_ENABLED: "自动守护：已开启",
   GUARD_DISABLED: "自动守护：未开启",
@@ -37,7 +37,7 @@ export const ZH = Object.freeze({
 // Localization copy (English)
 // ---------------------------------------------------------------------------
 
-export const EN = Object.freeze({
+const EN = Object.freeze({
   TITLE: "Workout Safety Guard",
   GUARD_ENABLED: "Auto Guard: Enabled",
   GUARD_DISABLED: "Auto Guard: Disabled",

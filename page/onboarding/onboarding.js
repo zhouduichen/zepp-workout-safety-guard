@@ -17,7 +17,7 @@ import { LocalStorage } from "@zos/storage";
 // Localization copy
 // ---------------------------------------------------------------------------
 
-export const ZH = Object.freeze({
+const ZH = Object.freeze({
   STEP_LABEL: "第 {0} / 8 步",
   TITLE_1: "运动异常求助辅助",
   BODY_1: "本应用是运动异常求助辅助，不是医疗设备。不能检测心脏骤停或跌倒。如有急症，请立即拨打急救电话。",
@@ -46,7 +46,7 @@ export const ZH = Object.freeze({
   PERMISSION_PROMPT: "请授权后台运行权限以开启自动守护",
 });
 
-export const EN = Object.freeze({
+const EN = Object.freeze({
   STEP_LABEL: "Step {0} / 8",
   TITLE_1: "Movement Anomaly Assistance",
   BODY_1: "This app provides movement anomaly assistance. It is not a medical device and cannot detect cardiac arrest or falls. If you have a medical emergency, call emergency services immediately.",
