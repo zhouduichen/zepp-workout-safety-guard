@@ -21,6 +21,7 @@ Start with these files:
 - `docs/superpowers/plans/2026-06-02-workout-safety-guard-implementation.md`
 - `docs/superpowers/specs/2026-06-02-workout-safety-guard-design.md`
 - `docs/verification/simulator-test-flow.md`
+- `docs/verification/phase-1-simulator-completion.md`
 - `docs/verification/true-device-runbook.md`
 - `docs/verification/platform-capability-matrix.md`
 
@@ -57,6 +58,7 @@ Start with these files:
 - Phone Side Service skeleton with demo dispatcher and protocol validation.
 - Settings page support for phone-side configuration.
 - Simulator test runbook.
+- Phase 1 simulator completion report.
 - True-device validation checklist.
 
 ## Important Recent Commits
