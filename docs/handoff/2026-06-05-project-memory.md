@@ -18,6 +18,7 @@ first when continuing work on `zepp-workout-safety-guard`.
 
 Start with these files:
 
+- `docs/handoff/2026-06-06-ui-deep-optimization-handoff.md`
 - `docs/superpowers/plans/2026-06-02-workout-safety-guard-implementation.md`
 - `docs/superpowers/specs/2026-06-02-workout-safety-guard-design.md`
 - `docs/verification/simulator-test-flow.md`
@@ -63,6 +64,16 @@ Start with these files:
 
 ## Important Recent Commits
 
+- `9554ebd style: polish workout guard watch UI`
+  - First UI polish pass for home, assist, onboarding, history, and secondary
+    widget.
+  - Added dark sport palette, Zepp `ARC` progress visuals, statistic cards,
+    event trend bars, and button press feedback.
+  - Verified with unit tests, validator, scenario simulation, Zeus build, and
+    simulator refresh.
+  - The user still wants a deeper, more premium Apple Fitness / watchOS style
+    refinement. Continue from
+    `docs/handoff/2026-06-06-ui-deep-optimization-handoff.md`.
 - `a1a4510 fix: defer assist GPS until help is sent`
   - Changed assist page so GPS does not start when the page opens.
   - GPS now starts only after help is actually queued.
