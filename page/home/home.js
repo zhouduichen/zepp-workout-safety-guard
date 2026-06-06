@@ -50,7 +50,7 @@ const EN = Object.freeze({
   NO_TRAINING: "Complete training first",
   BTN_UNWELL: "I Feel Unwell",
   BTN_PRACTICE: "Practice",
-  BTN_HISTORY: "Event History",
+  BTN_HISTORY: "History",
   BTN_ONBOARDING: "Start Guide",
 });
 

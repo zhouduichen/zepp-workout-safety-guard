@@ -162,10 +162,10 @@ export function TREND_BAR_STYLE(index, height, color) {
 
 export const BTN_UNWELL_STYLE = {
   x: px(30),
-  y: px(358),
+  y: px(354),
   w: px(330),
-  h: px(42),
-  radius: px(21),
+  h: px(44),
+  radius: px(22),
   normal_color: COLORS.RED,
   press_color: 0xd1302b,
   text_size: px(18),
@@ -173,11 +173,11 @@ export const BTN_UNWELL_STYLE = {
 };
 
 export const BTN_PRACTICE_STYLE = {
-  x: px(58),
-  y: px(408),
-  w: px(122),
-  h: px(24),
-  radius: px(12),
+  x: px(50),
+  y: px(406),
+  w: px(132),
+  h: px(30),
+  radius: px(15),
   normal_color: COLORS.SURFACE,
   press_color: COLORS.SURFACE_2,
   text_size: px(14),
@@ -185,11 +185,11 @@ export const BTN_PRACTICE_STYLE = {
 };
 
 export const BTN_HISTORY_STYLE = {
-  x: px(210),
-  y: px(408),
-  w: px(122),
-  h: px(24),
-  radius: px(12),
+  x: px(208),
+  y: px(406),
+  w: px(132),
+  h: px(30),
+  radius: px(15),
   normal_color: COLORS.SURFACE,
   press_color: COLORS.SURFACE_2,
   text_size: px(14),

@@ -50,11 +50,11 @@ export const CONN_LABEL_STYLE = {
 };
 
 export const COUNTDOWN_TRACK_STYLE = {
-  x: px(100),
+  x: px(112),
   y: px(78),
-  w: px(280),
-  h: px(280),
-  radius: px(140),
+  w: px(256),
+  h: px(256),
+  radius: px(128),
   start_angle: -90,
   end_angle: 270,
   color: COLORS.STROKE,
@@ -68,7 +68,7 @@ export const COUNTDOWN_RING_STYLE = {
 
 export const COUNTDOWN_STYLE = {
   x: px(0),
-  y: px(154),
+  y: px(144),
   w: px(480),
   h: px(96),
   color: COLORS.RED,
@@ -80,7 +80,7 @@ export const COUNTDOWN_STYLE = {
 
 export const COUNTDOWN_LABEL_STYLE = {
   x: px(0),
-  y: px(250),
+  y: px(242),
   w: px(480),
   h: px(28),
   color: COLORS.MUTED,
@@ -91,11 +91,11 @@ export const COUNTDOWN_LABEL_STYLE = {
 };
 
 export const CANCEL_BTN_STYLE = {
-  x: px(48),
-  y: px(368),
-  w: px(184),
-  h: px(52),
-  radius: px(26),
+  x: px(92),
+  y: px(336),
+  w: px(296),
+  h: px(44),
+  radius: px(22),
   normal_color: COLORS.SURFACE,
   press_color: COLORS.SURFACE_2,
   text_size: px(18),
@@ -103,11 +103,11 @@ export const CANCEL_BTN_STYLE = {
 };
 
 export const HELP_BTN_STYLE = {
-  x: px(248),
-  y: px(368),
-  w: px(184),
-  h: px(52),
-  radius: px(26),
+  x: px(92),
+  y: px(390),
+  w: px(296),
+  h: px(44),
+  radius: px(22),
   normal_color: COLORS.RED,
   press_color: 0xd1302b,
   text_size: px(18),
@@ -115,49 +115,13 @@ export const HELP_BTN_STYLE = {
 };
 
 export const PHONE_BTN_STYLE = {
-  x: px(86),
-  y: px(432),
-  w: px(308),
-  h: px(36),
-  radius: px(18),
+  x: px(154),
+  y: px(440),
+  w: px(172),
+  h: px(28),
+  radius: px(14),
   normal_color: COLORS.BLUE,
   press_color: 0x0867c8,
-  text_size: px(16),
+  text_size: px(13),
   text: "Open Phone",
-};
-
-export const CONFIRM_PROMPT_STYLE = {
-  x: px(58),
-  y: px(306),
-  w: px(364),
-  h: px(34),
-  color: COLORS.ORANGE,
-  text_size: px(18),
-  align_h: align.CENTER_H,
-  align_v: align.CENTER_V,
-  text_style: text_style.NONE,
-};
-
-export const CONFIRM_YES_STYLE = {
-  x: px(48),
-  y: px(368),
-  w: px(184),
-  h: px(52),
-  radius: px(26),
-  normal_color: COLORS.GREEN,
-  press_color: 0x28b63d,
-  text_size: px(18),
-  text: "I'm Safe",
-};
-
-export const CONFIRM_NO_STYLE = {
-  x: px(248),
-  y: px(368),
-  w: px(184),
-  h: px(52),
-  radius: px(26),
-  normal_color: COLORS.SURFACE,
-  press_color: COLORS.SURFACE_2,
-  text_size: px(18),
-  text: "Go Back",
 };

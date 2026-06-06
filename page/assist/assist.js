@@ -1,4 +1,5 @@
 import { createWidget, widget, prop } from "@zos/ui";
+import { createModal, MODAL_CONFIRM } from "@zos/interaction";
 import * as Styles from "zosLoader:./assist.[pf].layout.js";
 import * as Common from "zosLoader:./../common.[pf].layout.js";
 import { AssistState, createAssistController } from "../../src/pages/assist-controller.js";
@@ -43,9 +44,9 @@ Page({
     _cancelBtn: null,
     _contactBtn: null,
     _phoneBtn: null,
-    _confirmWrapper: null,
-    _confirmYesBtn: null,
-    _confirmNoBtn: null,
+    _confirmDialog: null,
+    _confirmingSafe: false,
+    _leaving: false,
   },
 
   onInit(params) {
@@ -117,27 +118,30 @@ Page({
       });
     }
 
-    this.state._confirmWrapper = createWidget(widget.TEXT, {
-      ...Styles.CONFIRM_PROMPT_STYLE,
-      text: "",
-    });
-    this.state._confirmWrapper.setEnable(false);
-
-    this.state._confirmYesBtn = createWidget(widget.BUTTON, {
-      ...Styles.CONFIRM_YES_STYLE,
-      text: "Confirm safe",
-      click_func: () => this._onConfirmCancel(),
-    });
-    this.state._confirmYesBtn.setEnable(false);
-
-    this.state._confirmNoBtn = createWidget(widget.BUTTON, {
-      ...Styles.CONFIRM_NO_STYLE,
-      text: "Back",
-      click_func: () => this._onAbortCancel(),
-    });
-    this.state._confirmNoBtn.setEnable(false);
+    this._createConfirmDialog();
 
     this._startAssistFlow();
+  },
+
+  _createConfirmDialog() {
+    try {
+      this.state._confirmDialog = createModal({
+        content: "Confirm safe?",
+        subtitle: "Cancel auto contact and return to guard.",
+        autoHide: false,
+        show: false,
+        onClick: (keyObj) => {
+          if (keyObj?.type === MODAL_CONFIRM) {
+            this._onConfirmCancel();
+          } else {
+            this._hideConfirmDialog();
+            this._onAbortCancel();
+          }
+        },
+      });
+    } catch {
+      this.state._confirmDialog = null;
+    }
   },
 
   _detectPhoneCapability() {
@@ -283,13 +287,13 @@ Page({
     this._setEnabled(this.state._cancelBtn, false);
     this._setEnabled(this.state._contactBtn, false);
     this._setEnabled(this.state._phoneBtn, false);
-    this._setWidgetText(this.state._confirmWrapper, "Confirm you are safe?");
-    this.state._confirmWrapper.setEnable(true);
-    this.state._confirmYesBtn.setEnable(true);
-    this.state._confirmNoBtn.setEnable(true);
+    this._showConfirmDialog();
   },
 
   _onConfirmCancel() {
+    if (this.state._confirmingSafe || this.state._leaving) return;
+    this.state._confirmingSafe = true;
+    this._hideConfirmDialog();
     if (this.state._assistController) {
       this.state._assistController.confirmCancel();
     } else {
@@ -299,12 +303,10 @@ Page({
 
   _onAbortCancel() {
     this.state._assistController?.abortCancel();
+    this.state._confirmingSafe = false;
     this._setEnabled(this.state._cancelBtn, true);
     this._setEnabled(this.state._contactBtn, true);
     this._setEnabled(this.state._phoneBtn, true);
-    this.state._confirmWrapper.setEnable(false);
-    this.state._confirmYesBtn.setEnable(false);
-    this.state._confirmNoBtn.setEnable(false);
   },
 
   _onHelpNow() {
@@ -323,10 +325,8 @@ Page({
     this._setWidgetText(this.state._connLabel, "Cancelled");
     this._setWidgetText(this.state._cancelBtn, "Close");
     this._setEnabled(this.state._cancelBtn, true);
-    this.state._confirmWrapper?.setEnable(false);
-    this.state._confirmYesBtn?.setEnable(false);
-    this.state._confirmNoBtn?.setEnable(false);
-    this._leaveAssistPage();
+    this._hideConfirmDialog();
+    this._leaveAssistPageSoon();
   },
 
   _updateCountdownDisplay() {
@@ -366,28 +366,48 @@ Page({
     }
   },
 
+  _showConfirmDialog() {
+    try {
+      this.state._confirmDialog?.show?.(true);
+    } catch {
+      this._onConfirmCancel();
+    }
+  },
+
+  _hideConfirmDialog() {
+    try {
+      this.state._confirmDialog?.show?.(false);
+    } catch {}
+  },
+
   _finishSafely() {
     this._stopGps();
-    this._leaveAssistPage();
+    this._leaveAssistPageSoon();
+  },
+
+  _leaveAssistPageSoon() {
+    if (this.state._leaving) return;
+    this.state._leaving = true;
+    setTimeout(() => this._leaveAssistPage(), 0);
   },
 
   _leaveAssistPage() {
     try {
       const router = require("@zos/router");
-      if (typeof router.back === "function") {
-        router.back();
-        return;
-      }
       if (typeof router.replace === "function") {
         router.replace({ url: "/page/home/home" });
         return;
       }
-      if (typeof router.finish === "function") {
-        router.finish();
-        return;
-      }
       if (typeof router.push === "function") {
         router.push({ url: "/page/home/home" });
+        return;
+      }
+      if (typeof router.back === "function") {
+        router.back();
+        return;
+      }
+      if (typeof router.finish === "function") {
+        router.finish();
       }
     } catch (e) {
       console.log("Assist leave failed: " + (e.message || String(e)));

@@ -95,10 +95,10 @@ export const SCORE_LABEL_STYLE = {
   text_style: text_style.NONE,
 };
 
-const STAT_W = px(170);
-const STAT_H = px(50);
-const STAT_X = [px(58), px(252)];
-const STAT_Y = [px(276), px(336)];
+const STAT_W = px(154);
+const STAT_H = px(42);
+const STAT_X = [px(78), px(248)];
+const STAT_Y = [px(282), px(328)];
 
 export function STAT_CARD_STYLE(index) {
   return {
@@ -106,18 +106,18 @@ export function STAT_CARD_STYLE(index) {
     y: STAT_Y[Math.floor(index / 2)],
     w: STAT_W,
     h: STAT_H,
-    radius: px(18),
+    radius: px(16),
   };
 }
 
 export function STAT_VALUE_STYLE(index) {
   return {
-    x: STAT_X[index % 2] + px(16),
-    y: STAT_Y[Math.floor(index / 2)] + px(7),
-    w: STAT_W - px(32),
-    h: px(24),
+    x: STAT_X[index % 2] + px(14),
+    y: STAT_Y[Math.floor(index / 2)] + px(5),
+    w: STAT_W - px(28),
+    h: px(22),
     color: COLORS.TEXT,
-    text_size: px(22),
+    text_size: px(20),
     align_h: align.LEFT,
     align_v: align.CENTER_V,
     text_style: text_style.NONE,
@@ -126,9 +126,9 @@ export function STAT_VALUE_STYLE(index) {
 
 export function STAT_LABEL_STYLE(index) {
   return {
-    x: STAT_X[index % 2] + px(16),
-    y: STAT_Y[Math.floor(index / 2)] + px(29),
-    w: STAT_W - px(32),
+    x: STAT_X[index % 2] + px(14),
+    y: STAT_Y[Math.floor(index / 2)] + px(25),
+    w: STAT_W - px(28),
     h: px(16),
     color: COLORS.MUTED,
     text_size: px(13),
@@ -140,7 +140,7 @@ export function STAT_LABEL_STYLE(index) {
 
 export const TREND_LABEL_STYLE = {
   x: px(58),
-  y: px(398),
+  y: px(264),
   w: px(110),
   h: px(20),
   color: COLORS.MUTED,
@@ -151,48 +151,49 @@ export const TREND_LABEL_STYLE = {
 };
 
 export function TREND_BAR_STYLE(index, height, color) {
+  const barHeight = Math.min(height, px(18));
   return {
     x: px(172 + index * 24),
-    y: px(416) - height,
+    y: px(282) - barHeight,
     w: px(14),
-    h: height,
+    h: barHeight,
     radius: px(7),
     color,
   };
 }
 
 export const BTN_UNWELL_STYLE = {
-  x: px(58),
-  y: px(420),
-  w: px(364),
-  h: px(42),
-  radius: px(21),
+  x: px(76),
+  y: px(374),
+  w: px(316),
+  h: px(44),
+  radius: px(22),
   normal_color: COLORS.RED,
   press_color: 0xd9362f,
-  text_size: px(19),
+  text_size: px(18),
   text: "I Feel Unwell",
 };
 
 export const BTN_PRACTICE_STYLE = {
-  x: px(92),
-  y: px(454),
-  w: px(136),
-  h: px(24),
-  radius: px(12),
+  x: px(104),
+  y: px(426),
+  w: px(128),
+  h: px(30),
+  radius: px(15),
   normal_color: COLORS.SURFACE,
   press_color: COLORS.SURFACE_2,
-  text_size: px(15),
+  text_size: px(14),
   text: "Practice",
 };
 
 export const BTN_HISTORY_STYLE = {
-  x: px(252),
-  y: px(454),
-  w: px(136),
-  h: px(24),
-  radius: px(12),
+  x: px(248),
+  y: px(426),
+  w: px(128),
+  h: px(30),
+  radius: px(15),
   normal_color: COLORS.SURFACE,
   press_color: COLORS.SURFACE_2,
-  text_size: px(15),
+  text_size: px(14),
   text: "History",
 };
