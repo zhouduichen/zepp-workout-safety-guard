@@ -1,20 +1,26 @@
 /**
- * secondary-widget/index.js — Secondary Widget for Workout Safety Guard
+ * Secondary Widget for Workout Safety Guard.
  *
- * Displays guard status and a quick "I feel unwell" entry point on the
- * negative-one-screen. Routes to page/assist/assist on tap.
- *
- * Restrictions:
- * - Must NOT perform GPS, BLE dispatch, or risk evaluation itself.
- * - UI-only: reads state from storage, navigates to assist page.
- *
- * Reference: @zeppos/device-types SecondaryWidget({...})
+ * UI-only quick entry. It reads persisted guard state and lets the
+ * configured widget route open page/assist/assist.
  */
 
 import { createWidget, widget, text_style, align } from '@zos/ui'
-import { push } from '@zos/router'
 import { px } from '@zos/utils'
 import { loadGuardState } from '../src/device/storage.js'
+
+const COLORS = {
+  BACKGROUND: 0x050607,
+  SURFACE: 0x15171a,
+  SURFACE_2: 0x202328,
+  STROKE: 0x2c3036,
+  TEXT: 0xf5f7fa,
+  MUTED: 0x8b929c,
+  GREEN: 0x32d74b,
+  ORANGE: 0xff9f0a,
+  RED: 0xff453a,
+  BLUE: 0x0a84ff,
+}
 
 const STATE_UNKNOWN = 'STATE_UNKNOWN'
 
@@ -26,78 +32,123 @@ SecondaryWidget({
   },
 
   onInit() {
-    // Restore persisted state
-    const saved = loadGuardState()
-    if (saved) {
-      this.state._guardState = saved.status || STATE_UNKNOWN
-      this.state.guardEnabled = saved.guardEnabled !== false
-      this.state.phoneOnline = saved.phoneOnline === true
-    }
+    this.refreshState()
   },
 
   build() {
-    // --- Product name ---
-    createWidget(widget.TEXT, {
+    const ringColor = this.state.guardEnabled
+      ? (this.state.phoneOnline ? COLORS.GREEN : COLORS.ORANGE)
+      : COLORS.BLUE
+
+    createWidget(widget.FILL_RECT, {
       x: px(0),
-      y: px(10),
+      y: px(0),
       w: px(200),
-      h: px(30),
-      color: 0xffffff,
-      text_size: px(18),
-      align_h: align.CENTER_H,
-      align_v: align.CENTER_V,
-      text_style: text_style.NONE,
-      text: '运动异常守护',
+      h: px(180),
+      radius: px(24),
+      color: COLORS.BACKGROUND,
     })
 
-    // --- Guard status ---
-    const guardText = this.state.guardEnabled ? '守护: 已开启' : '守护: 已关闭'
-    createWidget(widget.TEXT, {
-      x: px(0),
-      y: px(48),
-      w: px(200),
+    createWidget(widget.FILL_RECT, {
+      x: px(10),
+      y: px(8),
+      w: px(180),
+      h: px(164),
+      radius: px(22),
+      color: COLORS.SURFACE,
+    })
+
+    const title = createWidget(widget.TEXT, {
+      x: px(22),
+      y: px(18),
+      w: px(156),
       h: px(24),
-      color: this.state.guardEnabled ? 0x4caf50 : 0xaaaaaa,
-      text_size: px(14),
-      align_h: align.CENTER_H,
+      color: COLORS.TEXT,
+      text_size: px(17),
+      align_h: align.LEFT,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
-      text: guardText,
+      text: 'Fitness Guard',
+    })
+    title.setEnable(false)
+
+    createWidget(widget.ARC, {
+      x: px(24),
+      y: px(52),
+      w: px(58),
+      h: px(58),
+      radius: px(29),
+      start_angle: -90,
+      end_angle: 270,
+      color: COLORS.STROKE,
+      line_width: px(5),
     })
 
-    // --- Phone connection status ---
-    const connText = this.state.phoneOnline ? '手机: 在线' : '手机: 离线'
-    createWidget(widget.TEXT, {
-      x: px(0),
-      y: px(76),
-      w: px(200),
+    createWidget(widget.ARC, {
+      x: px(24),
+      y: px(52),
+      w: px(58),
+      h: px(58),
+      radius: px(29),
+      start_angle: -90,
+      end_angle: this.state.guardEnabled ? 246 : 90,
+      color: ringColor,
+      line_width: px(5),
+    })
+
+    const stateText = createWidget(widget.TEXT, {
+      x: px(96),
+      y: px(54),
+      w: px(76),
       h: px(24),
-      color: this.state.phoneOnline ? 0x4caf50 : 0xff9800,
-      text_size: px(14),
-      align_h: align.CENTER_H,
-      align_v: align.CENTER_V,
-      text_style: text_style.NONE,
-      text: connText,
-    })
-
-    // --- "I feel unwell" button (large, prominent) ---
-    const unwellBtn = createWidget(widget.TEXT, {
-      x: px(20),
-      y: px(120),
-      w: px(160),
-      h: px(48),
-      color: 0xff1744,
+      color: ringColor,
       text_size: px(20),
+      align_h: align.LEFT,
+      align_v: align.CENTER_V,
+      text_style: text_style.NONE,
+      text: this.state.guardEnabled ? 'Ready' : 'Setup',
+    })
+    stateText.setEnable(false)
+
+    const phoneText = createWidget(widget.TEXT, {
+      x: px(96),
+      y: px(82),
+      w: px(76),
+      h: px(20),
+      color: COLORS.MUTED,
+      text_size: px(13),
+      align_h: align.LEFT,
+      align_v: align.CENTER_V,
+      text_style: text_style.NONE,
+      text: this.state.phoneOnline ? 'Phone online' : 'Local alert',
+    })
+    phoneText.setEnable(false)
+
+    createWidget(widget.FILL_RECT, {
+      x: px(22),
+      y: px(124),
+      w: px(156),
+      h: px(36),
+      radius: px(18),
+      color: COLORS.RED,
+    })
+
+    const helpText = createWidget(widget.TEXT, {
+      x: px(22),
+      y: px(128),
+      w: px(156),
+      h: px(28),
+      color: COLORS.TEXT,
+      text_size: px(16),
       align_h: align.CENTER_H,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
-      text: '我感觉不适',
+      text: 'I Feel Unwell',
     })
-    unwellBtn.setEnable(false)
+    helpText.setEnable(false)
   },
 
-  onResume() {
-    // Refresh state when widget gains focus
+  refreshState() {
     const saved = loadGuardState()
     if (saved) {
       this.state._guardState = saved.status || STATE_UNKNOWN
@@ -106,11 +157,11 @@ SecondaryWidget({
     }
   },
 
-  onPause() {
-    // No-op
+  onResume() {
+    this.refreshState()
   },
 
-  onDestroy() {
-    // Cleanup if needed
-  },
+  onPause() {},
+
+  onDestroy() {},
 })

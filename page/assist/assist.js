@@ -35,7 +35,10 @@ Page({
     _geoChangeHandler: null,
     _gpsTimeoutId: null,
     _title: null,
+    _countdownTrack: null,
+    _countdownArc: null,
     _countdown: null,
+    _countdownLabel: null,
     _connLabel: null,
     _cancelBtn: null,
     _contactBtn: null,
@@ -55,12 +58,26 @@ Page({
   build() {
     createWidget(widget.FILL_RECT, {
       ...Common.SCREEN_STYLE,
-      color: 0x1a1a2e,
+      color: Styles.COLORS.BACKGROUND,
     });
 
     this.state._title = createWidget(widget.TEXT, {
       ...Styles.TITLE_STYLE,
-      text: "Workout anomaly help",
+      text: "Workout Help",
+    });
+
+    createWidget(widget.FILL_RECT, {
+      ...Styles.CONN_PILL_BG_STYLE,
+      color: Styles.COLORS.SURFACE_2,
+    });
+
+    this.state._countdownTrack = createWidget(widget.ARC, {
+      ...Styles.COUNTDOWN_TRACK_STYLE,
+    });
+
+    this.state._countdownArc = createWidget(widget.ARC, {
+      ...Styles.COUNTDOWN_RING_STYLE,
+      end_angle: this._countdownEndAngle(this.state.remaining),
     });
 
     this.state._countdown = createWidget(widget.TEXT, {
@@ -68,14 +85,21 @@ Page({
       text: "30",
     });
 
+    this.state._countdownLabel = createWidget(widget.TEXT, {
+      ...Styles.COUNTDOWN_LABEL_STYLE,
+      text: "30s to auto contact",
+    });
+    this.state._countdownLabel.setEnable(false);
+
     this.state._connLabel = createWidget(widget.TEXT, {
       ...Styles.CONN_LABEL_STYLE,
-      text: this.state.phoneOnline ? "Phone online" : "Offline local alert only",
+      color: this.state.phoneOnline ? Styles.COLORS.GREEN : Styles.COLORS.ORANGE,
+      text: this.state.phoneOnline ? "Online" : "Offline",
     });
 
     this.state._cancelBtn = createWidget(widget.BUTTON, {
       ...Styles.CANCEL_BTN_STYLE,
-      text: "Cancel request",
+      text: "I'm safe",
       click_func: () => this._onCancelTap(),
     });
 
@@ -169,7 +193,7 @@ Page({
         if (this.state._assistController) {
           this.state._assistController.locationUpdate(position.lat, position.lng);
         }
-        this._setWidgetText(this.state._connLabel, "Location captured");
+        this._setWidgetText(this.state._connLabel, "GPS ready");
         this._stopGps();
       };
 
@@ -232,7 +256,7 @@ Page({
     try {
       this.state._assistSession.sendHelp(payload);
     } catch {}
-    this._setWidgetText(this.state._connLabel, "Help queued");
+    this._setWidgetText(this.state._connLabel, "Queued");
     this._setEnabled(this.state._contactBtn, false);
     this._setWidgetText(this.state._cancelBtn, "Close");
     this._startGps();
@@ -257,6 +281,8 @@ Page({
 
     this.state._assistController?.cancelRequest();
     this._setEnabled(this.state._cancelBtn, false);
+    this._setEnabled(this.state._contactBtn, false);
+    this._setEnabled(this.state._phoneBtn, false);
     this._setWidgetText(this.state._confirmWrapper, "Confirm you are safe?");
     this.state._confirmWrapper.setEnable(true);
     this.state._confirmYesBtn.setEnable(true);
@@ -274,6 +300,8 @@ Page({
   _onAbortCancel() {
     this.state._assistController?.abortCancel();
     this._setEnabled(this.state._cancelBtn, true);
+    this._setEnabled(this.state._contactBtn, true);
+    this._setEnabled(this.state._phoneBtn, true);
     this.state._confirmWrapper.setEnable(false);
     this.state._confirmYesBtn.setEnable(false);
     this.state._confirmNoBtn.setEnable(false);
@@ -292,7 +320,7 @@ Page({
 
   _finishCancelled() {
     this._stopGps();
-    this._setWidgetText(this.state._connLabel, "Request cancelled");
+    this._setWidgetText(this.state._connLabel, "Cancelled");
     this._setWidgetText(this.state._cancelBtn, "Close");
     this._setEnabled(this.state._cancelBtn, true);
     this.state._confirmWrapper?.setEnable(false);
@@ -302,7 +330,22 @@ Page({
   },
 
   _updateCountdownDisplay() {
-    this._setWidgetText(this.state._countdown, String(Math.max(0, this.state.remaining)));
+    const remaining = Math.max(0, this.state.remaining);
+    this._setWidgetText(this.state._countdown, String(remaining));
+    this._setWidgetText(this.state._countdownLabel, remaining > 0 ? `${remaining}s to auto contact` : "Help queued");
+    if (this.state._countdownArc) {
+      try {
+        this.state._countdownArc.setProperty(prop.MORE, {
+          end_angle: this._countdownEndAngle(remaining),
+          color: remaining <= 10 ? Styles.COLORS.RED : Styles.COLORS.ORANGE,
+        });
+      } catch {}
+    }
+  },
+
+  _countdownEndAngle(remaining) {
+    const progress = Math.max(0, Math.min(30, remaining)) / 30;
+    return Math.round(-90 + progress * 360);
   },
 
   _setWidgetText(target, text) {

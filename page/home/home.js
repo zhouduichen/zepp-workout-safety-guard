@@ -54,8 +54,7 @@ const EN = Object.freeze({
   BTN_ONBOARDING: "Start Guide",
 });
 
-// Use Chinese as default
-const i18n = ZH;
+const i18n = EN;
 
 Page({
   state: {
@@ -64,9 +63,14 @@ Page({
     phoneOnline: false,
     contactCount: 0,
     outboxCount: 0,
+    history: [],
+    decorations: [],
     firstBuild: true,
     widgets: {
       title: null,
+      statusPill: null,
+      score: null,
+      scoreLabel: null,
       statusGuard: null,
       statusRemote: null,
       statusContacts: null,
@@ -110,8 +114,10 @@ Page({
       try {
         const guardState = JSON.parse(guardRaw);
         this.state.guardEnabled = guardState && guardState.guardEnabled !== false;
+        this.state.phoneOnline = guardState && guardState.phoneOnline === true;
       } catch {
         this.state.guardEnabled = false;
+        this.state.phoneOnline = false;
       }
     }
 
@@ -129,115 +135,237 @@ Page({
       }
     }
 
+    const historyRaw = localStorage.getItem("guard_history", "[]");
+    try {
+      const history = JSON.parse(historyRaw);
+      this.state.history = Array.isArray(history) ? history : [];
+    } catch {
+      this.state.history = [];
+    }
+
     this.createUI();
   },
 
   createUI() {
-    // Destroy existing widgets
     this.destroyUI();
 
     const s = this.state;
+    const colors = Styles.COLORS;
+    const guardScore = this._computeGuardScore();
+    const scoreColor = this._scoreColor(guardScore);
 
-    // Title
+    this._addDecoration(createWidget(widget.FILL_RECT, {
+      ...Common.SCREEN_STYLE,
+      color: colors.BACKGROUND,
+    }));
+
+    this._drawCard(Styles.STATUS_PILL_BG_STYLE, colors.SURFACE_2);
+
     s.widgets.title = createWidget(widget.TEXT, {
       ...Styles.TITLE_STYLE,
-      text: i18n.TITLE,
+      text: "Fitness Guard",
     });
     s.widgets.title.setEnable(false);
 
-    // Status: Guard enabled/disabled
-    s.widgets.statusGuard = createWidget(widget.TEXT, {
-      ...Styles.STATUS_GUARD_STYLE,
-      text: s.guardEnabled ? i18n.GUARD_ENABLED : i18n.GUARD_DISABLED,
+    s.widgets.statusPill = createWidget(widget.TEXT, {
+      ...Styles.STATUS_PILL_TEXT_STYLE,
+      color: s.guardEnabled ? colors.GREEN : colors.ORANGE,
+      text: s.guardEnabled ? "ACTIVE" : "SETUP",
     });
-    s.widgets.statusGuard.setEnable(false);
+    s.widgets.statusPill.setEnable(false);
 
-    // Status: Remote assistance
-    s.widgets.statusRemote = createWidget(widget.TEXT, {
-      ...Styles.STATUS_REMOTE_STYLE,
-      text: s.phoneOnline ? i18n.REMOTE_ONLINE : i18n.REMOTE_OFFLINE,
+    this._addDecoration(createWidget(widget.ARC, {
+      ...Styles.RING_TRACK_STYLE,
+    }));
+    this._addDecoration(createWidget(widget.ARC, {
+      ...Styles.RING_PROGRESS_STYLE,
+      end_angle: this._progressEndAngle(guardScore),
+      color: scoreColor,
+    }));
+
+    s.widgets.score = createWidget(widget.TEXT, {
+      ...Styles.SCORE_STYLE,
+      color: colors.TEXT,
+      text: String(guardScore),
     });
-    s.widgets.statusRemote.setEnable(false);
+    s.widgets.score.setEnable(false);
 
-    // Status: Contacts
-    const contactText =
-      s.contactCount > 0
-        ? i18n.CONTACTS.replace("{0}", String(s.contactCount))
-        : i18n.CONTACTS_NONE;
-    s.widgets.statusContacts = createWidget(widget.TEXT, {
-      ...Styles.STATUS_CONTACTS_STYLE,
-      text: contactText,
+    s.widgets.scoreLabel = createWidget(widget.TEXT, {
+      ...Styles.SCORE_LABEL_STYLE,
+      text: "Guard Score",
     });
-    s.widgets.statusContacts.setEnable(false);
+    s.widgets.scoreLabel.setEnable(false);
 
-    // Status: Outbox
-    const outboxText =
-      s.outboxCount > 0
-        ? i18n.OUTBOX_PENDING.replace("{0}", String(s.outboxCount))
-        : i18n.OUTBOX_NONE;
+    this._createStat(0, `${s.contactCount}/3`, "Contacts", s.contactCount > 0 ? colors.GREEN : colors.ORANGE);
+    this._createStat(1, String(s.outboxCount), "Queue", s.outboxCount > 0 ? colors.RED : colors.GREEN);
+    this._createStat(2, s.phoneOnline ? "On" : "Off", "Phone", s.phoneOnline ? colors.GREEN : colors.ORANGE);
+    this._createStat(3, s.guardEnabled ? "On" : "Off", "Service", s.guardEnabled ? colors.BLUE : colors.DIM);
+
     s.widgets.statusOutbox = createWidget(widget.TEXT, {
-      ...Styles.STATUS_OUTBOX_STYLE,
-      text: outboxText,
+      ...Styles.TREND_LABEL_STYLE,
+      text: "Readiness",
     });
     s.widgets.statusOutbox.setEnable(false);
 
+    const bars = this._readinessBars(guardScore);
+    for (let i = 0; i < bars.length; i++) {
+      this._addDecoration(createWidget(widget.FILL_RECT, Styles.TREND_BAR_STYLE(
+        i,
+        px(bars[i].height),
+        bars[i].color,
+      )));
+    }
+
     if (s.trainingComplete) {
-      // Button: I feel unwell
-      s.widgets.btnUnwell = createWidget(widget.TEXT, {
+      s.widgets.btnUnwell = createWidget(widget.BUTTON, {
         ...Styles.BTN_UNWELL_STYLE,
         text: i18n.BTN_UNWELL,
-      });
-      s.widgets.btnUnwell.addEventListener(event.CLICK_UP, () => {
-        try {
-          push({ url: "/page/assist/assist", params: { source: "home" } });
-        } catch (e) {
-          console.log("Assist nav failed: " + (e.message || String(e)));
-        }
+        click_func: () => {
+          try {
+            push({ url: "/page/assist/assist", params: { source: "home" } });
+          } catch (e) {
+            console.log("Assist nav failed: " + (e.message || String(e)));
+          }
+        },
       });
 
-      // Button: Practice
-      s.widgets.btnPractice = createWidget(widget.TEXT, {
+      s.widgets.btnPractice = createWidget(widget.BUTTON, {
         ...Styles.BTN_PRACTICE_STYLE,
         text: i18n.BTN_PRACTICE,
-      });
-      s.widgets.btnPractice.addEventListener(event.CLICK_UP, () => {
-        try {
-          push({ url: "/page/onboarding/onboarding", params: { practiceOnly: "true" } });
-        } catch (e) {
-          console.log("Practice nav failed: " + (e.message || String(e)));
-        }
+        click_func: () => {
+          try {
+            push({ url: "/page/onboarding/onboarding", params: { practiceOnly: "true" } });
+          } catch (e) {
+            console.log("Practice nav failed: " + (e.message || String(e)));
+          }
+        },
       });
 
-      // Button: Event history
-      s.widgets.btnHistory = createWidget(widget.TEXT, {
+      s.widgets.btnHistory = createWidget(widget.BUTTON, {
         ...Styles.BTN_HISTORY_STYLE,
         text: i18n.BTN_HISTORY,
-      });
-      s.widgets.btnHistory.addEventListener(event.CLICK_UP, () => {
-        try {
-          push({ url: "/page/history/history" });
-        } catch (e) {
-          console.log("History nav failed: " + (e.message || String(e)));
-        }
+        click_func: () => {
+          try {
+            push({ url: "/page/history/history" });
+          } catch (e) {
+            console.log("History nav failed: " + (e.message || String(e)));
+          }
+        },
       });
     } else {
-      // Training not done, show onboarding button
-      s.widgets.btnUnwell = createWidget(widget.TEXT, {
+      s.widgets.btnUnwell = createWidget(widget.BUTTON, {
         ...Styles.BTN_UNWELL_STYLE,
         text: i18n.BTN_ONBOARDING,
-      });
-      s.widgets.btnUnwell.addEventListener(event.CLICK_UP, () => {
-        try {
-          push({ url: "/page/onboarding/onboarding" });
-        } catch (e) {
-          console.log("Onboarding nav failed: " + (e.message || String(e)));
-        }
+        normal_color: colors.BLUE,
+        press_color: 0x0867c8,
+        click_func: () => {
+          try {
+            push({ url: "/page/onboarding/onboarding" });
+          } catch (e) {
+            console.log("Onboarding nav failed: " + (e.message || String(e)));
+          }
+        },
       });
     }
   },
 
+  _addDecoration(ref) {
+    if (ref) this.state.decorations.push(ref);
+    return ref;
+  },
+
+  _drawCard(style, color) {
+    this._addDecoration(createWidget(widget.FILL_RECT, {
+      ...style,
+      y: style.y + px(2),
+      color: 0x090a0c,
+    }));
+    return this._addDecoration(createWidget(widget.FILL_RECT, {
+      ...style,
+      color,
+    }));
+  },
+
+  _createStat(index, value, label, color) {
+    this._drawCard(Styles.STAT_CARD_STYLE(index), Styles.COLORS.SURFACE);
+    this.state.widgets[`status${index}`] = createWidget(widget.TEXT, {
+      ...Styles.STAT_VALUE_STYLE(index),
+      color,
+      text: value,
+    });
+    this.state.widgets[`status${index}`].setEnable(false);
+    this.state.widgets[`statusLabel${index}`] = createWidget(widget.TEXT, {
+      ...Styles.STAT_LABEL_STYLE(index),
+      text: label,
+    });
+    this.state.widgets[`statusLabel${index}`].setEnable(false);
+  },
+
+  _computeGuardScore() {
+    let score = 42;
+    if (this.state.guardEnabled) score += 24;
+    if (this.state.phoneOnline) score += 16;
+    if (this.state.contactCount >= 3) score += 10;
+    else if (this.state.contactCount > 0) score += 6;
+    if (this.state.outboxCount === 0) score += 8;
+    else score -= Math.min(24, this.state.outboxCount * 8);
+    return Math.max(0, Math.min(100, score));
+  },
+
+  _scoreColor(score) {
+    if (this.state.outboxCount > 0) return Styles.COLORS.RED;
+    if (!this.state.phoneOnline) return Styles.COLORS.ORANGE;
+    if (score >= 80) return Styles.COLORS.GREEN;
+    return Styles.COLORS.BLUE;
+  },
+
+  _progressEndAngle(score) {
+    return Math.round(-90 + (Math.max(0, Math.min(100, score)) / 100) * 360);
+  },
+
+  _readinessBars(score) {
+    const recent = this.state.history.slice(0, 6).reverse();
+    if (recent.length > 0) {
+      return recent.map((evt, index) => {
+        let color = Styles.COLORS.ORANGE;
+        let height = 22 + index * 2;
+        if (evt.status === "resolved") {
+          color = Styles.COLORS.GREEN;
+          height = 34;
+        } else if (evt.status === "acknowledged") {
+          color = Styles.COLORS.BLUE;
+          height = 30;
+        } else if (evt.status === "queued") {
+          color = Styles.COLORS.ORANGE;
+          height = 26;
+        } else {
+          color = Styles.COLORS.RED;
+          height = 38;
+        }
+        return { height, color };
+      });
+    }
+
+    const base = [18, 26, 22, 34, 29, 38];
+    return base.map((height, index) => {
+      let color = index % 3 === 0 ? Styles.COLORS.GREEN : Styles.COLORS.BLUE;
+      if (!this.state.phoneOnline && index >= 4) color = Styles.COLORS.ORANGE;
+      if (this.state.outboxCount > 0 && index >= 5) color = Styles.COLORS.RED;
+      return {
+        height: index === base.length - 1 ? Math.max(14, Math.round(score * 0.38)) : height,
+        color,
+      };
+    });
+  },
+
   destroyUI() {
     const s = this.state;
+    for (const w of s.decorations) {
+      if (w !== null && typeof w === "object") {
+        try { deleteWidget(w); } catch {}
+      }
+    }
+    s.decorations = [];
     for (const key of Object.keys(s.widgets)) {
       const w = s.widgets[key];
       if (w !== null && typeof w === "object") {

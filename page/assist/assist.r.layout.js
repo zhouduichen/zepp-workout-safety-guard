@@ -4,110 +4,160 @@ import { align, text_style } from "@zos/ui";
 export const W = px(480);
 export const H = px(480);
 
+export const COLORS = {
+  BACKGROUND: 0x050607,
+  SURFACE: 0x15171a,
+  SURFACE_2: 0x202328,
+  STROKE: 0x2c3036,
+  TEXT: 0xf5f7fa,
+  MUTED: 0x8b929c,
+  GREEN: 0x32d74b,
+  ORANGE: 0xff9f0a,
+  RED: 0xff453a,
+  BLUE: 0x0a84ff,
+};
+
 export const TITLE_STYLE = {
-  x: px(0),
+  x: px(44),
   y: px(30),
-  w: px(480),
-  h: px(50),
-  color: 0xffffff,
-  text_size: px(28),
+  w: px(300),
+  h: px(34),
+  color: COLORS.TEXT,
+  text_size: px(26),
+  align_h: align.LEFT,
+  align_v: align.CENTER_V,
+  text_style: text_style.NONE,
+};
+
+export const CONN_PILL_BG_STYLE = {
+  x: px(314),
+  y: px(34),
+  w: px(116),
+  h: px(28),
+  radius: px(14),
+};
+
+export const CONN_LABEL_STYLE = {
+  x: px(314),
+  y: px(36),
+  w: px(116),
+  h: px(24),
+  color: COLORS.GREEN,
+  text_size: px(13),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
+};
+
+export const COUNTDOWN_TRACK_STYLE = {
+  x: px(100),
+  y: px(78),
+  w: px(280),
+  h: px(280),
+  radius: px(140),
+  start_angle: -90,
+  end_angle: 270,
+  color: COLORS.STROKE,
+  line_width: px(18),
+};
+
+export const COUNTDOWN_RING_STYLE = {
+  ...COUNTDOWN_TRACK_STYLE,
+  color: COLORS.ORANGE,
 };
 
 export const COUNTDOWN_STYLE = {
   x: px(0),
-  y: px(90),
+  y: px(154),
   w: px(480),
-  h: px(120),
-  color: 0xff4444,
-  text_size: px(96),
+  h: px(96),
+  color: COLORS.RED,
+  text_size: px(94),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
 };
 
-export const CONN_LABEL_STYLE = {
-  x: px(40),
-  y: px(220),
-  w: px(400),
-  h: px(36),
-  color: 0xaaaaaa,
-  text_size: px(22),
+export const COUNTDOWN_LABEL_STYLE = {
+  x: px(0),
+  y: px(250),
+  w: px(480),
+  h: px(28),
+  color: COLORS.MUTED,
+  text_size: px(18),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
 };
 
 export const CANCEL_BTN_STYLE = {
-  x: px(40),
-  y: px(280),
-  w: px(190),
-  h: px(56),
-  radius: px(12),
-  normal_color: 0x555555,
-  press_color: 0x777777,
-  text_size: px(22),
-  text: "取消求助",
+  x: px(48),
+  y: px(370),
+  w: px(184),
+  h: px(52),
+  radius: px(26),
+  normal_color: COLORS.SURFACE_2,
+  press_color: COLORS.STROKE,
+  text_size: px(19),
+  text: "Confirm Safe",
 };
 
 export const HELP_BTN_STYLE = {
-  x: px(250),
-  y: px(280),
-  w: px(190),
-  h: px(56),
-  radius: px(12),
-  normal_color: 0xcc3333,
-  press_color: 0xee5555,
-  text_size: px(22),
-  text: "立即联系家人",
+  x: px(248),
+  y: px(370),
+  w: px(184),
+  h: px(52),
+  radius: px(26),
+  normal_color: COLORS.RED,
+  press_color: 0xd9362f,
+  text_size: px(19),
+  text: "Contact Now",
 };
 
 export const PHONE_BTN_STYLE = {
-  x: px(40),
-  y: px(360),
-  w: px(400),
-  h: px(56),
-  radius: px(12),
-  normal_color: 0x2266cc,
-  press_color: 0x4488ee,
-  text_size: px(22),
-  text: "打开电话呼叫急救",
+  x: px(86),
+  y: px(432),
+  w: px(308),
+  h: px(36),
+  radius: px(18),
+  normal_color: COLORS.BLUE,
+  press_color: 0x0867c8,
+  text_size: px(16),
+  text: "Open Phone",
 };
 
 export const CONFIRM_PROMPT_STYLE = {
-  x: px(0),
-  y: px(210),
-  w: px(480),
-  h: px(40),
-  color: 0xffcc00,
-  text_size: px(24),
+  x: px(58),
+  y: px(306),
+  w: px(364),
+  h: px(34),
+  color: COLORS.ORANGE,
+  text_size: px(18),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
 };
 
 export const CONFIRM_YES_STYLE = {
-  x: px(40),
-  y: px(280),
-  w: px(190),
-  h: px(56),
-  radius: px(12),
-  normal_color: 0xcc3333,
-  press_color: 0xee5555,
-  text_size: px(22),
-  text: "确认安全",
+  x: px(48),
+  y: px(370),
+  w: px(184),
+  h: px(52),
+  radius: px(26),
+  normal_color: COLORS.GREEN,
+  press_color: 0x28b63d,
+  text_size: px(19),
+  text: "I'm Safe",
 };
 
 export const CONFIRM_NO_STYLE = {
-  x: px(250),
-  y: px(280),
-  w: px(190),
-  h: px(56),
-  radius: px(12),
-  normal_color: 0x555555,
-  press_color: 0x777777,
-  text_size: px(22),
-  text: "返回",
+  x: px(248),
+  y: px(370),
+  w: px(184),
+  h: px(52),
+  radius: px(26),
+  normal_color: COLORS.SURFACE_2,
+  press_color: COLORS.STROKE,
+  text_size: px(19),
+  text: "Go Back",
 };

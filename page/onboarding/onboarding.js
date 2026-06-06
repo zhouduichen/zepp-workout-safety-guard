@@ -1,86 +1,43 @@
 /**
- * onboarding.js — First-run onboarding flow.
+ * onboarding.js - First-run onboarding flow.
  *
- * Explains capabilities and limitations of the safety guard,
- * requests background-service permission, runs a practice alert,
- * then transitions to the home dashboard.
+ * Explains capabilities and limitations, requests background-service
+ * permission, runs a practice drill, then transitions to the home dashboard.
  */
 
-import { createWidget, deleteWidget, widget, event, prop } from "@zos/ui";
+import { createWidget, deleteWidget, widget, prop } from "@zos/ui";
 import * as Styles from "zosLoader:./onboarding.[pf].layout.js";
 import * as Common from "zosLoader:./../common.[pf].layout.js";
 import { push } from "@zos/router";
-import { px } from "@zos/utils";
 import { LocalStorage } from "@zos/storage";
 
-// ---------------------------------------------------------------------------
-// Localization copy
-// ---------------------------------------------------------------------------
-
-const ZH = Object.freeze({
-  STEP_LABEL: "第 {0} / 8 步",
-  TITLE_1: "运动异常求助辅助",
-  BODY_1: "本应用是运动异常求助辅助，不是医疗设备。不能检测心脏骤停或跌倒。如有急症，请立即拨打急救电话。",
-  TITLE_2: "权限说明",
-  BODY_2: "应用需要后台运行权限，以便在运动期间持续监测。仅用于本地判断，不会在后台上传个人数据。",
-  TITLE_3: "GPS 仅在求助时使用",
-  BODY_3: "定位仅在您主动打开求助页面时临时获取，不会在后台持续运行。结束后立即关闭。",
-  TITLE_4: "需要手机连接",
-  BODY_4: "通知紧急联系人需要手表通过蓝牙连接附近的手机。手机不在身边时无法联系联系人。",
-  TITLE_5: "离线模式",
-  BODY_5: "手机离线时，应用会发出本地警报。恢复连接后自动补发求助通知。",
-  TITLE_6: "配置联系人",
-  BODY_6: "请在 Zepp App 的设置页面中配置紧急联系人，最多可添加 3 位。未配置联系人时仍可使用本地守护。",
-  TITLE_7: "需要完成演练",
-  BODY_7: "每次使用前，需要完成一次模拟演练，熟悉求助、取消和立即联系操作。演练不会联系任何人。",
-  TITLE_8: "模拟演练",
-  BODY_8_PRACTICE: "这是模拟演练。下面的倒计时模拟求助等待。",
-  COUNTDOWN_LABEL: "演练倒计时",
-  CANCEL_BTN: "点此取消",
-  CONTACT_BTN: "演练：联系家人",
-  GRANT_PERMISSION: "授权后台权限",
-  PERMISSION_GRANTED: "后台权限已授权",
-  NEXT_BTN: "下一步",
-  START_BTN: "开始演练",
-  DONE_BTN: "完成并开启守护",
-  PERMISSION_PROMPT: "请授权后台运行权限以开启自动守护",
-});
-
-const EN = Object.freeze({
+const i18n = Object.freeze({
   STEP_LABEL: "Step {0} / 8",
-  TITLE_1: "Movement Anomaly Assistance",
-  BODY_1: "This app provides movement anomaly assistance. It is not a medical device and cannot detect cardiac arrest or falls. If you have a medical emergency, call emergency services immediately.",
-  TITLE_2: "Permission Notice",
-  BODY_2: "This app needs background running permission to monitor during workouts. Data is processed locally and not uploaded in the background.",
-  TITLE_3: "GPS Usage",
-  BODY_3: "GPS runs only when you actively open the assistance page. It stops immediately afterward and never runs in the background.",
-  TITLE_4: "Phone Connection Required",
-  BODY_4: "Notifying emergency contacts requires the watch to be connected to a nearby phone via Bluetooth. Contacts cannot be reached when the phone is not nearby.",
-  TITLE_5: "Offline Mode",
-  BODY_5: "When offline, the app alerts locally. Notifications are replayed automatically when connectivity is restored.",
-  TITLE_6: "Configure Contacts",
-  BODY_6: "Configure up to 3 emergency contacts in the Zepp App settings page. Local monitoring still works without contacts.",
-  TITLE_7: "Training Required",
-  BODY_7: "A practice drill is required before enabling the guard. It will not contact anyone.",
-  TITLE_8: "Practice Drill",
-  BODY_8_PRACTICE: "This is a practice drill. The countdown simulates the assistance waiting period.",
-  COUNTDOWN_LABEL: "Practice Countdown",
-  CANCEL_BTN: "Tap to Cancel",
-  CONTACT_BTN: "Drill: Contact Family",
-  GRANT_PERMISSION: "Grant Background Permission",
-  PERMISSION_GRANTED: "Background Permission Granted",
+  TITLE_1: "Movement anomaly assistance",
+  BODY_1: "This guard helps during workouts. It is not a medical device and cannot detect emergencies.",
+  TITLE_2: "Background permission",
+  BODY_2: "Background access keeps the guard active during workouts. Processing stays local on the watch.",
+  TITLE_3: "GPS only on help page",
+  BODY_3: "Location starts only after you open the help page and stops once the request flow ends.",
+  TITLE_4: "Phone connection",
+  BODY_4: "Remote notification needs a nearby connected phone. Offline mode keeps a local alert and queues help.",
+  TITLE_5: "Offline replay",
+  BODY_5: "If the phone reconnects later, queued help events are replayed once with an idempotent event ID.",
+  TITLE_6: "Contact setup",
+  BODY_6: "Contacts live on the phone side. The watch only shows how many contacts are configured.",
+  TITLE_7: "Practice required",
+  BODY_7: "A short drill teaches cancel and contact actions before enabling the guard.",
+  TITLE_8: "Practice drill",
+  BODY_8_PRACTICE: "This is a local simulation. It will not contact anyone.",
+  COUNTDOWN_LABEL: "Practice countdown",
+  CANCEL_BTN: "Cancel drill",
+  CONTACT_BTN: "Drill contact",
+  GRANT_PERMISSION: "Grant background access",
   NEXT_BTN: "Next",
-  START_BTN: "Start Drill",
-  DONE_BTN: "Done & Enable Guard",
-  PERMISSION_PROMPT: "Grant background permission to enable auto guard",
+  START_BTN: "Start drill",
+  DONE_BTN: "Enable guard",
+  PERMISSION_PROMPT: "Grant background permission to enable auto guard.",
 });
-
-// Use Chinese as default
-const i18n = ZH;
-
-// ---------------------------------------------------------------------------
-// Onboarding step definitions
-// ---------------------------------------------------------------------------
 
 const STEPS = [
   { title: i18n.TITLE_1, body: i18n.BODY_1 },
@@ -90,7 +47,6 @@ const STEPS = [
   { title: i18n.TITLE_5, body: i18n.BODY_5 },
   { title: i18n.TITLE_6, body: i18n.BODY_6 },
   { title: i18n.TITLE_7, body: i18n.BODY_7 },
-  // Step 8 is the practice drill (special rendering)
 ];
 
 const TOTAL_STEPS = 8;
@@ -104,43 +60,34 @@ Page({
     trainingComplete: false,
     isPracticeRunning: false,
     practiceTimer: null,
+    decorations: [],
     widgets: {
       pageIndicator: null,
       title: null,
       body: null,
       countdown: null,
       countdownLabel: null,
+      progressArc: null,
       btnPrimary: null,
       btnCancel: null,
     },
   },
 
   build() {
-    // Read trainingComplete and permissionGranted from localStorage
     const localStorage = new LocalStorage();
     const storedTraining = localStorage.getItem("trainingComplete", false);
     this.state.trainingComplete = storedTraining === true || storedTraining === "true";
-
-    // Check if background permission was already granted from previous session
-    this.state.permissionGranted = false; // will be rechecked via queryPermission
-
+    this.state.permissionGranted = false;
     this.createUI();
   },
 
   createUI() {
-    // Destroy existing UI widgets before re-creating
     this.destroyUI();
+    this.drawBase();
 
     const s = this.state;
-
-    // Page indicator
-    s.widgets.pageIndicator = createWidget(widget.TEXT, {
-      ...Styles.PAGE_INDICATOR_STYLE,
-      text: this.formatStepLabel(s.currentStep),
-    });
-
     if (s.currentStep < TOTAL_STEPS - 1) {
-      // Regular info step
+      this.drawCard();
       const step = STEPS[s.currentStep];
 
       s.widgets.title = createWidget(widget.TEXT, {
@@ -155,29 +102,56 @@ Page({
       });
       s.widgets.body.setEnable(false);
 
-      // Next button
-      s.widgets.btnPrimary = createWidget(widget.TEXT, {
+      s.widgets.btnPrimary = createWidget(widget.BUTTON, {
         ...Styles.BTN_PRIMARY_STYLE,
         text: i18n.NEXT_BTN,
+        click_func: () => this.goToNextStep(),
       });
-      s.widgets.btnPrimary.addEventListener(event.CLICK_UP, () => {
-        this.goToNextStep();
-      });
-
-      // No cancel button on regular steps
-    } else {
-      // Step 8: Practice drill step with countdown and buttons
-      // We render either the "ready" state or the "running" state
-      if (!s.isPracticeRunning) {
-        this.renderPracticeReady();
-      } else {
-        this.renderPracticeRunning();
-      }
+      return;
     }
+
+    if (s.isPracticeRunning) {
+      this.renderPracticeRunning();
+    } else {
+      this.renderPracticeReady();
+    }
+  },
+
+  drawBase() {
+    this._addDecoration(createWidget(widget.FILL_RECT, {
+      ...Common.SCREEN_STYLE,
+      color: Styles.COLORS.BACKGROUND,
+    }));
+
+    this.state.widgets.pageIndicator = createWidget(widget.TEXT, {
+      ...Styles.PAGE_INDICATOR_STYLE,
+      text: this.formatStepLabel(this.state.currentStep),
+    });
+    this.state.widgets.pageIndicator.setEnable(false);
+
+    for (let i = 0; i < TOTAL_STEPS; i++) {
+      this._addDecoration(createWidget(widget.FILL_RECT, Styles.PROGRESS_DOT_STYLE(
+        i,
+        i <= this.state.currentStep,
+      )));
+    }
+  },
+
+  drawCard() {
+    this._addDecoration(createWidget(widget.FILL_RECT, {
+      ...Styles.CARD_STYLE,
+      y: Styles.CARD_STYLE.y + 2,
+      color: 0x090a0c,
+    }));
+    this._addDecoration(createWidget(widget.FILL_RECT, {
+      ...Styles.CARD_STYLE,
+      color: Styles.COLORS.SURFACE,
+    }));
   },
 
   renderPracticeReady() {
     const s = this.state;
+    this.drawCard();
 
     s.widgets.title = createWidget(widget.TEXT, {
       ...Styles.TITLE_STYLE,
@@ -191,22 +165,19 @@ Page({
     });
     s.widgets.body.setEnable(false);
 
-    // Show permission grant button if not granted
     if (!s.permissionGranted) {
-      s.widgets.btnPrimary = createWidget(widget.TEXT, {
+      s.widgets.btnPrimary = createWidget(widget.BUTTON, {
         ...Styles.BTN_PRIMARY_STYLE,
+        normal_color: Styles.COLORS.BLUE,
+        press_color: 0x0867c8,
         text: i18n.GRANT_PERMISSION,
-      });
-      s.widgets.btnPrimary.addEventListener(event.CLICK_UP, () => {
-        this.requestBackgroundPermission();
+        click_func: () => this.requestBackgroundPermission(),
       });
     } else {
-      s.widgets.btnPrimary = createWidget(widget.TEXT, {
+      s.widgets.btnPrimary = createWidget(widget.BUTTON, {
         ...Styles.BTN_PRIMARY_STYLE,
         text: i18n.START_BTN,
-      });
-      s.widgets.btnPrimary.addEventListener(event.CLICK_UP, () => {
-        this.startPracticeDrill();
+        click_func: () => this.startPracticeDrill(),
       });
     }
   },
@@ -214,7 +185,14 @@ Page({
   renderPracticeRunning() {
     const s = this.state;
 
-    // Large countdown
+    this._addDecoration(createWidget(widget.ARC, {
+      ...Styles.COUNTDOWN_TRACK_STYLE,
+    }));
+    s.widgets.progressArc = createWidget(widget.ARC, {
+      ...Styles.COUNTDOWN_RING_STYLE,
+      end_angle: this.practiceEndAngle(s.practiceSecondsRemaining),
+    });
+
     s.widgets.countdown = createWidget(widget.TEXT, {
       ...Styles.COUNTDOWN_STYLE,
       text: String(s.practiceSecondsRemaining),
@@ -227,23 +205,49 @@ Page({
     });
     s.widgets.countdownLabel.setEnable(false);
 
-    // Cancel button
-    s.widgets.btnCancel = createWidget(widget.TEXT, {
+    s.widgets.btnCancel = createWidget(widget.BUTTON, {
       ...Styles.BTN_CANCEL_STYLE,
       text: i18n.CANCEL_BTN,
-    });
-    s.widgets.btnCancel.addEventListener(event.CLICK_UP, () => {
-      this.cancelPracticeDrill();
+      click_func: () => this.cancelPracticeDrill(),
     });
 
-    // Contact button (practice, never actually sends)
-    s.widgets.btnPrimary = createWidget(widget.TEXT, {
+    s.widgets.btnPrimary = createWidget(widget.BUTTON, {
       ...Styles.BTN_PRIMARY_STYLE,
+      normal_color: Styles.COLORS.ORANGE,
+      press_color: 0xd88408,
       text: i18n.CONTACT_BTN,
+      click_func: () => this.completePracticeDrill(),
     });
-    s.widgets.btnPrimary.addEventListener(event.CLICK_UP, () => {
-      // In practice mode, simulate contact without actually sending
-      this.completePracticeDrill();
+  },
+
+  renderPracticeComplete() {
+    this.destroyUI();
+    this.drawBase();
+    this.drawCard();
+
+    const s = this.state;
+    s.widgets.title = createWidget(widget.TEXT, {
+      ...Styles.TITLE_STYLE,
+      text: i18n.TITLE_8,
+    });
+    s.widgets.title.setEnable(false);
+
+    s.widgets.body = createWidget(widget.TEXT, {
+      ...Styles.BODY_STYLE,
+      text: "Practice complete\nGuard can be enabled",
+    });
+    s.widgets.body.setEnable(false);
+
+    s.widgets.btnPrimary = createWidget(widget.BUTTON, {
+      ...Styles.BTN_PRIMARY_STYLE,
+      text: i18n.DONE_BTN,
+      click_func: () => this.startGuardService(),
+    });
+
+    s.widgets.btnCancel = createWidget(widget.BUTTON, {
+      ...Styles.BTN_CANCEL_STYLE,
+      text: "Later",
+      click_func: () => this.navigateToHome(),
     });
   },
 
@@ -252,9 +256,8 @@ Page({
   },
 
   goToNextStep() {
-    const s = this.state;
-    if (s.currentStep < TOTAL_STEPS - 1) {
-      s.currentStep++;
+    if (this.state.currentStep < TOTAL_STEPS - 1) {
+      this.state.currentStep++;
       this.createUI();
     }
   },
@@ -263,29 +266,35 @@ Page({
     const s = this.state;
     s.isPracticeRunning = true;
     s.practiceSecondsRemaining = PRACTICE_DURATION_SEC;
-
     this.createUI();
 
-    // Start countdown timer
     s.practiceTimer = setInterval(() => {
       s.practiceSecondsRemaining--;
       if (s.practiceSecondsRemaining <= 0) {
-        // Practice countdown expired — treat as completed
         clearInterval(s.practiceTimer);
         s.practiceTimer = null;
-        // Store training complete (user went through the full drill)
         this.storeTrainingComplete();
         this.navigateToHome();
         return;
       }
 
-      // Update countdown display
       if (s.widgets.countdown) {
         s.widgets.countdown.setProperty(prop.MORE, {
           text: String(s.practiceSecondsRemaining),
         });
       }
+      if (s.widgets.progressArc) {
+        s.widgets.progressArc.setProperty(prop.MORE, {
+          end_angle: this.practiceEndAngle(s.practiceSecondsRemaining),
+          color: s.practiceSecondsRemaining <= 10 ? Styles.COLORS.RED : Styles.COLORS.ORANGE,
+        });
+      }
     }, 1000);
+  },
+
+  practiceEndAngle(remaining) {
+    const progress = Math.max(0, Math.min(PRACTICE_DURATION_SEC, remaining)) / PRACTICE_DURATION_SEC;
+    return Math.round(-90 + progress * 360);
   },
 
   cancelPracticeDrill() {
@@ -295,11 +304,7 @@ Page({
       s.practiceTimer = null;
     }
     s.isPracticeRunning = false;
-
-    // Store training complete (user cancelled but was shown the interaction)
     this.storeTrainingComplete();
-
-    // Show done button
     this.renderPracticeComplete();
   },
 
@@ -310,62 +315,15 @@ Page({
       s.practiceTimer = null;
     }
     s.isPracticeRunning = false;
-
-    // Store training complete
     this.storeTrainingComplete();
-
     this.renderPracticeComplete();
-  },
-
-  renderPracticeComplete() {
-    // Clear UI and show completion state
-    this.destroyUI();
-
-    const s = this.state;
-
-    s.widgets.pageIndicator = createWidget(widget.TEXT, {
-      ...Styles.PAGE_INDICATOR_STYLE,
-      text: i18n.STEP_LABEL.replace("{0}", "8"),
-    });
-
-    s.widgets.title = createWidget(widget.TEXT, {
-      ...Styles.TITLE_STYLE,
-      text: i18n.TITLE_8,
-    });
-    s.widgets.title.setEnable(false);
-
-    s.widgets.body = createWidget(widget.TEXT, {
-      ...Styles.BODY_STYLE,
-      text: i18n.PERMISSION_GRANTED + "\n" + (s.trainingComplete ? "演练已完成" : ""),
-    });
-    s.widgets.body.setEnable(false);
-
-    s.widgets.btnPrimary = createWidget(widget.TEXT, {
-      ...Styles.BTN_PRIMARY_STYLE,
-      text: i18n.DONE_BTN,
-    });
-    s.widgets.btnPrimary.addEventListener(event.CLICK_UP, () => {
-      this.startGuardService();
-    });
-
-    // Also provide a cancel for users who want to go to home without starting
-    s.widgets.btnCancel = createWidget(widget.TEXT, {
-      ...Styles.BTN_CANCEL_STYLE,
-      text: "稍后再说",
-    });
-    s.widgets.btnCancel.addEventListener(event.CLICK_UP, () => {
-      this.navigateToHome();
-    });
   },
 
   requestBackgroundPermission() {
     const s = this.state;
 
     try {
-      // Use @zos/app-service for permission flow
       const appService = require("@zos/app-service");
-
-      // First query if permission is already granted
       const status = appService.queryPermission("device:os.bg_service");
       if (status === "granted" || status === true) {
         s.permissionGranted = true;
@@ -373,29 +331,24 @@ Page({
         return;
       }
 
-      // Request permission
       const result = appService.requestPermission("device:os.bg_service");
       if (result === "granted" || result === true) {
         s.permissionGranted = true;
         this.createUI();
-      } else {
-        // Permission denied — show prompt and stay on same step
-        if (s.widgets.body) {
-          s.widgets.body.setProperty(prop.MORE, {
-            text: i18n.PERMISSION_PROMPT,
-          });
-        }
+      } else if (s.widgets.body) {
+        s.widgets.body.setProperty(prop.MORE, {
+          text: i18n.PERMISSION_PROMPT,
+        });
       }
     } catch (e) {
       console.log("Permission request failed: " + (e.message || String(e)));
-      // If app-service module is not available, treat as granted for development
       s.permissionGranted = true;
       this.createUI();
     }
   },
 
   storeTrainingComplete() {
-    if (this.state.trainingComplete) return; // already stored
+    if (this.state.trainingComplete) return;
 
     this.state.trainingComplete = true;
     try {
@@ -409,7 +362,6 @@ Page({
   startGuardService() {
     try {
       const appService = require("@zos/app-service");
-      // Start the background guard service
       appService.start({
         serviceId: "guard-service",
         params: JSON.stringify({ source: "onboarding" }),
@@ -429,8 +381,20 @@ Page({
     }
   },
 
+  _addDecoration(ref) {
+    if (ref) this.state.decorations.push(ref);
+    return ref;
+  },
+
   destroyUI() {
     const s = this.state;
+    for (const w of s.decorations) {
+      if (w !== null && typeof w === "object") {
+        try { deleteWidget(w); } catch {}
+      }
+    }
+    s.decorations = [];
+
     for (const key of Object.keys(s.widgets)) {
       const w = s.widgets[key];
       if (w !== null && typeof w === "object") {
@@ -441,7 +405,6 @@ Page({
   },
 
   onDestroy() {
-    // Clean up timer if page is being destroyed
     const s = this.state;
     if (s.practiceTimer) {
       clearInterval(s.practiceTimer);

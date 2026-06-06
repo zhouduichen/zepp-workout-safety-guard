@@ -6,110 +6,160 @@ setStatusBarVisible(false);
 export const W = px(390);
 export const H = px(450);
 
+export const COLORS = {
+  BACKGROUND: 0x050607,
+  SURFACE: 0x15171a,
+  SURFACE_2: 0x202328,
+  STROKE: 0x2c3036,
+  TEXT: 0xf5f7fa,
+  MUTED: 0x8b929c,
+  GREEN: 0x32d74b,
+  ORANGE: 0xff9f0a,
+  RED: 0xff453a,
+  BLUE: 0x0a84ff,
+};
+
 export const TITLE_STYLE = {
-  x: px(0),
-  y: px(20),
-  w: px(390),
-  h: px(40),
-  color: 0xffffff,
-  text_size: px(24),
+  x: px(28),
+  y: px(24),
+  w: px(240),
+  h: px(30),
+  color: COLORS.TEXT,
+  text_size: px(23),
+  align_h: align.LEFT,
+  align_v: align.CENTER_V,
+  text_style: text_style.NONE,
+};
+
+export const CONN_PILL_BG_STYLE = {
+  x: px(270),
+  y: px(26),
+  w: px(92),
+  h: px(26),
+  radius: px(13),
+};
+
+export const CONN_LABEL_STYLE = {
+  x: px(270),
+  y: px(28),
+  w: px(92),
+  h: px(22),
+  color: COLORS.GREEN,
+  text_size: px(12),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
+};
+
+export const COUNTDOWN_TRACK_STYLE = {
+  x: px(74),
+  y: px(70),
+  w: px(242),
+  h: px(242),
+  radius: px(121),
+  start_angle: -90,
+  end_angle: 270,
+  color: COLORS.STROKE,
+  line_width: px(16),
+};
+
+export const COUNTDOWN_RING_STYLE = {
+  ...COUNTDOWN_TRACK_STYLE,
+  color: COLORS.ORANGE,
 };
 
 export const COUNTDOWN_STYLE = {
   x: px(0),
-  y: px(70),
+  y: px(136),
   w: px(390),
-  h: px(100),
-  color: 0xff4444,
-  text_size: px(80),
+  h: px(86),
+  color: COLORS.RED,
+  text_size: px(82),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
 };
 
-export const CONN_LABEL_STYLE = {
-  x: px(20),
-  y: px(180),
-  w: px(350),
-  h: px(30),
-  color: 0xaaaaaa,
-  text_size: px(18),
+export const COUNTDOWN_LABEL_STYLE = {
+  x: px(0),
+  y: px(222),
+  w: px(390),
+  h: px(24),
+  color: COLORS.MUTED,
+  text_size: px(16),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
 };
 
 export const CANCEL_BTN_STYLE = {
-  x: px(20),
-  y: px(230),
+  x: px(30),
+  y: px(330),
   w: px(160),
-  h: px(50),
-  radius: px(10),
-  normal_color: 0x555555,
-  press_color: 0x777777,
-  text_size: px(20),
-  text: "取消求助",
+  h: px(48),
+  radius: px(24),
+  normal_color: COLORS.SURFACE_2,
+  press_color: COLORS.STROKE,
+  text_size: px(17),
+  text: "Confirm Safe",
 };
 
 export const HELP_BTN_STYLE = {
-  x: px(210),
-  y: px(230),
+  x: px(200),
+  y: px(330),
   w: px(160),
-  h: px(50),
-  radius: px(10),
-  normal_color: 0xcc3333,
-  press_color: 0xee5555,
-  text_size: px(20),
-  text: "立即联系家人",
+  h: px(48),
+  radius: px(24),
+  normal_color: COLORS.RED,
+  press_color: 0xd9362f,
+  text_size: px(17),
+  text: "Contact Now",
 };
 
 export const PHONE_BTN_STYLE = {
-  x: px(20),
-  y: px(300),
-  w: px(350),
-  h: px(50),
-  radius: px(10),
-  normal_color: 0x2266cc,
-  press_color: 0x4488ee,
-  text_size: px(20),
-  text: "打开电话呼叫急救",
+  x: px(58),
+  y: px(388),
+  w: px(274),
+  h: px(34),
+  radius: px(17),
+  normal_color: COLORS.BLUE,
+  press_color: 0x0867c8,
+  text_size: px(15),
+  text: "Open Phone",
 };
 
 export const CONFIRM_PROMPT_STYLE = {
-  x: px(0),
-  y: px(170),
-  w: px(390),
-  h: px(36),
-  color: 0xffcc00,
-  text_size: px(22),
+  x: px(38),
+  y: px(282),
+  w: px(314),
+  h: px(28),
+  color: COLORS.ORANGE,
+  text_size: px(16),
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.NONE,
 };
 
 export const CONFIRM_YES_STYLE = {
-  x: px(20),
-  y: px(230),
+  x: px(30),
+  y: px(330),
   w: px(160),
-  h: px(50),
-  radius: px(10),
-  normal_color: 0xcc3333,
-  press_color: 0xee5555,
-  text_size: px(20),
-  text: "确认安全",
+  h: px(48),
+  radius: px(24),
+  normal_color: COLORS.GREEN,
+  press_color: 0x28b63d,
+  text_size: px(17),
+  text: "I'm Safe",
 };
 
 export const CONFIRM_NO_STYLE = {
-  x: px(210),
-  y: px(230),
+  x: px(200),
+  y: px(330),
   w: px(160),
-  h: px(50),
-  radius: px(10),
-  normal_color: 0x555555,
-  press_color: 0x777777,
-  text_size: px(20),
-  text: "返回",
+  h: px(48),
+  radius: px(24),
+  normal_color: COLORS.SURFACE_2,
+  press_color: COLORS.STROKE,
+  text_size: px(17),
+  text: "Go Back",
 };
