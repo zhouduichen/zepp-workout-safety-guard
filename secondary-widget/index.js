@@ -10,13 +10,13 @@ import { px } from '@zos/utils'
 import { loadGuardState } from '../src/device/storage.js'
 
 const COLORS = {
-  BACKGROUND: 0x050607,
-  SURFACE: 0x15171a,
-  SURFACE_2: 0x202328,
-  STROKE: 0x2c3036,
-  TEXT: 0xf5f7fa,
-  MUTED: 0x8b929c,
-  GREEN: 0x32d74b,
+  BACKGROUND: 0x000000,
+  SURFACE: 0x1c1c1e,
+  SURFACE_2: 0x2c2c2e,
+  STROKE: 0x38383a,
+  TEXT: 0xffffff,
+  MUTED: 0x8e8e93,
+  GREEN: 0x30d158,
   ORANGE: 0xff9f0a,
   RED: 0xff453a,
   BLUE: 0x0a84ff,

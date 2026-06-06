@@ -159,7 +159,7 @@ Page({
       color: colors.BACKGROUND,
     }));
 
-    this._drawCard(Styles.STATUS_PILL_BG_STYLE, colors.SURFACE_2);
+    this._drawCard(Styles.STATUS_PILL_BG_STYLE, colors.SURFACE);
 
     s.widgets.title = createWidget(widget.TEXT, {
       ...Styles.TITLE_STYLE,
@@ -277,8 +277,8 @@ Page({
   _drawCard(style, color) {
     this._addDecoration(createWidget(widget.FILL_RECT, {
       ...style,
-      y: style.y + px(2),
-      color: 0x090a0c,
+      y: style.y + px(4),
+      color: 0x0a0a0c,
     }));
     return this._addDecoration(createWidget(widget.FILL_RECT, {
       ...style,

@@ -68,7 +68,7 @@ Page({
 
     createWidget(widget.FILL_RECT, {
       ...Styles.CONN_PILL_BG_STYLE,
-      color: Styles.COLORS.SURFACE_2,
+      color: Styles.COLORS.SURFACE,
     });
 
     this.state._countdownTrack = createWidget(widget.ARC, {

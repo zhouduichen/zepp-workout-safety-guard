@@ -1,4 +1,5 @@
 import { createWidget, deleteWidget, widget } from "@zos/ui";
+import { px } from "@zos/utils";
 import * as Styles from "zosLoader:./history.[pf].layout.js";
 import * as Common from "zosLoader:./../common.[pf].layout.js";
 import {
@@ -92,11 +93,15 @@ Page({
   },
 
   createEventRow(index, evt) {
-    const color = this.statusColor(evt.status);
+    const dotColor = this.statusColor(evt.status);
     this.drawCard(Styles.EVENT_ROW_BG(index), Styles.COLORS.SURFACE);
     this.track(createWidget(widget.FILL_RECT, {
-      ...Styles.EVENT_STRIP_STYLE(index),
-      color,
+      x: Styles.EVENT_ROW_BG(index).x + px(12),
+      y: Styles.EVENT_ROW_BG(index).y + px(19),
+      w: px(10),
+      h: px(10),
+      radius: px(5),
+      color: dotColor,
     }));
 
     this.track(createWidget(widget.TEXT, {
@@ -107,7 +112,7 @@ Page({
 
     this.track(createWidget(widget.TEXT, {
       ...Styles.EVENT_STATUS_STYLE(index),
-      color,
+      color: dotColor,
       text: this.statusLabel(evt.status),
     }));
 
@@ -130,8 +135,8 @@ Page({
   drawCard(style, color) {
     this.track(createWidget(widget.FILL_RECT, {
       ...style,
-      y: style.y + 2,
-      color: 0x090a0c,
+      y: style.y + px(4),
+      color: 0x0a0a0c,
     }));
     this.track(createWidget(widget.FILL_RECT, {
       ...style,

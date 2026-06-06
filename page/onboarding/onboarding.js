@@ -140,8 +140,8 @@ Page({
   drawCard() {
     this._addDecoration(createWidget(widget.FILL_RECT, {
       ...Styles.CARD_STYLE,
-      y: Styles.CARD_STYLE.y + 2,
-      color: 0x090a0c,
+      y: Styles.CARD_STYLE.y + px(4),
+      color: 0x0a0a0c,
     }));
     this._addDecoration(createWidget(widget.FILL_RECT, {
       ...Styles.CARD_STYLE,

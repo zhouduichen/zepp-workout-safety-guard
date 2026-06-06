@@ -5,13 +5,13 @@ export const W = px(480);
 export const H = px(480);
 
 export const COLORS = {
-  BACKGROUND: 0x050607,
-  SURFACE: 0x15171a,
-  SURFACE_2: 0x202328,
-  STROKE: 0x2c3036,
-  TEXT: 0xf5f7fa,
-  MUTED: 0x8b929c,
-  GREEN: 0x32d74b,
+  BACKGROUND: 0x000000,
+  SURFACE: 0x1c1c1e,
+  SURFACE_2: 0x2c2c2e,
+  STROKE: 0x38383a,
+  TEXT: 0xffffff,
+  MUTED: 0x8e8e93,
+  GREEN: 0x30d158,
   ORANGE: 0xff9f0a,
   RED: 0xff453a,
   BLUE: 0x0a84ff,
@@ -92,25 +92,25 @@ export const COUNTDOWN_LABEL_STYLE = {
 
 export const CANCEL_BTN_STYLE = {
   x: px(48),
-  y: px(370),
+  y: px(368),
   w: px(184),
   h: px(52),
   radius: px(26),
-  normal_color: COLORS.SURFACE_2,
-  press_color: COLORS.STROKE,
-  text_size: px(19),
-  text: "Confirm Safe",
+  normal_color: COLORS.SURFACE,
+  press_color: COLORS.SURFACE_2,
+  text_size: px(18),
+  text: "I'm Safe",
 };
 
 export const HELP_BTN_STYLE = {
   x: px(248),
-  y: px(370),
+  y: px(368),
   w: px(184),
   h: px(52),
   radius: px(26),
   normal_color: COLORS.RED,
-  press_color: 0xd9362f,
-  text_size: px(19),
+  press_color: 0xd1302b,
+  text_size: px(18),
   text: "Contact Now",
 };
 
@@ -140,24 +140,24 @@ export const CONFIRM_PROMPT_STYLE = {
 
 export const CONFIRM_YES_STYLE = {
   x: px(48),
-  y: px(370),
+  y: px(368),
   w: px(184),
   h: px(52),
   radius: px(26),
   normal_color: COLORS.GREEN,
   press_color: 0x28b63d,
-  text_size: px(19),
+  text_size: px(18),
   text: "I'm Safe",
 };
 
 export const CONFIRM_NO_STYLE = {
   x: px(248),
-  y: px(370),
+  y: px(368),
   w: px(184),
   h: px(52),
   radius: px(26),
-  normal_color: COLORS.SURFACE_2,
-  press_color: COLORS.STROKE,
-  text_size: px(19),
+  normal_color: COLORS.SURFACE,
+  press_color: COLORS.SURFACE_2,
+  text_size: px(18),
   text: "Go Back",
 };

@@ -8,17 +8,17 @@ export const W = px(480);
 export const H = px(480);
 
 export const COLORS = {
-  BACKGROUND: 0x050607,
-  SURFACE: 0x15171a,
-  SURFACE_2: 0x202328,
-  STROKE: 0x2c3036,
-  TEXT: 0xf5f7fa,
-  MUTED: 0x8b929c,
-  GREEN: 0x32d74b,
+  BACKGROUND: 0x000000,
+  SURFACE: 0x1c1c1e,
+  SURFACE_2: 0x2c2c2e,
+  STROKE: 0x38383a,
+  TEXT: 0xffffff,
+  MUTED: 0x8e8e93,
+  GREEN: 0x30d158,
   ORANGE: 0xff9f0a,
   RED: 0xff453a,
   BLUE: 0x0a84ff,
-  PINK: 0xff2d92,
+  PINK: 0xff375f,
 };
 
 export const PAGE_INDICATOR_STYLE = {
@@ -46,19 +46,19 @@ export function PROGRESS_DOT_STYLE(index, active) {
 
 export const CARD_STYLE = {
   x: px(48),
-  y: px(92),
+  y: px(88),
   w: px(384),
-  h: px(232),
+  h: px(236),
   radius: px(28),
 };
 
 export const TITLE_STYLE = {
   x: px(76),
-  y: px(122),
+  y: px(116),
   w: px(328),
-  h: px(42),
+  h: px(38),
   color: COLORS.TEXT,
-  text_size: px(28),
+  text_size: px(26),
   align_h: align.LEFT,
   align_v: align.CENTER_V,
   text_style: text_style.WRAP,
@@ -66,11 +66,11 @@ export const TITLE_STYLE = {
 
 export const BODY_STYLE = {
   x: px(76),
-  y: px(176),
+  y: px(168),
   w: px(328),
-  h: px(128),
+  h: px(134),
   color: COLORS.MUTED,
-  text_size: px(19),
+  text_size: px(18),
   align_h: align.LEFT,
   align_v: align.CENTER_V,
   text_style: text_style.WRAP,
@@ -119,24 +119,24 @@ export const COUNTDOWN_LABEL_STYLE = {
 
 export const BTN_PRIMARY_STYLE = {
   x: px(58),
-  y: px(386),
+  y: px(382),
   w: px(364),
-  h: px(48),
-  radius: px(24),
+  h: px(46),
+  radius: px(23),
   normal_color: COLORS.GREEN,
   press_color: 0x28b63d,
-  text_size: px(20),
+  text_size: px(19),
   text: "Next",
 };
 
 export const BTN_CANCEL_STYLE = {
   x: px(100),
-  y: px(440),
+  y: px(436),
   w: px(280),
-  h: px(34),
-  radius: px(17),
-  normal_color: COLORS.SURFACE_2,
-  press_color: COLORS.STROKE,
-  text_size: px(16),
+  h: px(32),
+  radius: px(16),
+  normal_color: COLORS.SURFACE,
+  press_color: COLORS.SURFACE_2,
+  text_size: px(15),
   text: "Cancel",
 };
