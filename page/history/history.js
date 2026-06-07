@@ -44,6 +44,10 @@ Page({
     if (events.length === 0) {
       this.drawCard(Styles.EMPTY_CARD_STYLE, Styles.COLORS.SURFACE);
       this.track(createWidget(widget.TEXT, {
+        ...Styles.EMPTY_CHECK_STYLE,
+        text: "\u2713",
+      }));
+      this.track(createWidget(widget.TEXT, {
         ...Styles.EMPTY_STYLE,
         text: "No events yet",
       }));
@@ -66,17 +70,25 @@ Page({
       }));
     }
 
-    this.track(createWidget(widget.BUTTON, {
-      ...Styles.CLEAR_BTN_STYLE,
-      text: "Clear",
-      click_func: () => this._onClearHistory(),
-    }));
+    if (events.length === 0) {
+      this.track(createWidget(widget.BUTTON, {
+        ...Styles.EMPTY_BACK_BTN_STYLE,
+        text: "Back",
+        click_func: () => this._onBack(),
+      }));
+    } else {
+      this.track(createWidget(widget.BUTTON, {
+        ...Styles.CLEAR_BTN_STYLE,
+        text: "Clear",
+        click_func: () => this._onClearHistory(),
+      }));
 
-    this.track(createWidget(widget.BUTTON, {
-      ...Styles.BACK_BTN_STYLE,
-      text: "Back",
-      click_func: () => this._onBack(),
-    }));
+      this.track(createWidget(widget.BUTTON, {
+        ...Styles.BACK_BTN_STYLE,
+        text: "Back",
+        click_func: () => this._onBack(),
+      }));
+    }
   },
 
   createSummary(index, value, label, color) {

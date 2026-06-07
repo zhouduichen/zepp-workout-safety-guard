@@ -18,9 +18,9 @@ export const COLORS = {
 };
 
 export const TITLE_STYLE = {
-  x: px(48),
+  x: px(58),
   y: px(26),
-  w: px(250),
+  w: px(240),
   h: px(30),
   color: COLORS.TEXT,
   text_size: px(26),
@@ -30,9 +30,9 @@ export const TITLE_STYLE = {
 };
 
 export const COUNT_STYLE = {
-  x: px(310),
+  x: px(300),
   y: px(32),
-  w: px(114),
+  w: px(106),
   h: px(22),
   color: COLORS.MUTED,
   text_size: px(14),
@@ -41,12 +41,12 @@ export const COUNT_STYLE = {
   text_style: text_style.NONE,
 };
 
-const SUMMARY_X = [px(48), px(180), px(312)];
+const SUMMARY_X = [px(64), px(188), px(312)];
 export function SUMMARY_CARD_STYLE(index) {
   return {
     x: SUMMARY_X[index],
     y: px(78),
-    w: px(120),
+    w: px(104),
     h: px(62),
     radius: px(18),
   };
@@ -56,7 +56,7 @@ export function SUMMARY_VALUE_STYLE(index) {
   return {
     x: SUMMARY_X[index] + px(14),
     y: px(87),
-    w: px(92),
+    w: px(76),
     h: px(26),
     color: COLORS.TEXT,
     text_size: px(24),
@@ -70,7 +70,7 @@ export function SUMMARY_LABEL_STYLE(index) {
   return {
     x: SUMMARY_X[index] + px(14),
     y: px(116),
-    w: px(92),
+    w: px(76),
     h: px(16),
     color: COLORS.MUTED,
     text_size: px(12),
@@ -149,11 +149,11 @@ export function EVENT_TAG_STYLE(i) {
 }
 
 export const MARK_SAFE_BTN_STYLE = {
-  x: px(58),
-  y: px(362),
-  w: px(364),
-  h: px(42),
-  radius: px(21),
+  x: px(82),
+  y: px(354),
+  w: px(316),
+  h: px(40),
+  radius: px(20),
   normal_color: COLORS.GREEN,
   press_color: 0x28b63d,
   text_size: px(18),
@@ -161,9 +161,9 @@ export const MARK_SAFE_BTN_STYLE = {
 };
 
 export const CLEAR_BTN_STYLE = {
-  x: px(58),
-  y: px(418),
-  w: px(168),
+  x: px(116),
+  y: px(414),
+  w: px(112),
   h: px(30),
   radius: px(15),
   normal_color: COLORS.SURFACE,
@@ -173,9 +173,9 @@ export const CLEAR_BTN_STYLE = {
 };
 
 export const BACK_BTN_STYLE = {
-  x: px(254),
-  y: px(418),
-  w: px(168),
+  x: px(252),
+  y: px(414),
+  w: px(112),
   h: px(30),
   radius: px(15),
   normal_color: COLORS.SURFACE,
@@ -185,16 +185,28 @@ export const BACK_BTN_STYLE = {
 };
 
 export const EMPTY_CARD_STYLE = {
-  x: px(48),
+  x: px(58),
   y: px(160),
-  w: px(384),
-  h: px(120),
+  w: px(364),
+  h: px(126),
   radius: px(22),
+};
+
+export const EMPTY_CHECK_STYLE = {
+  x: px(0),
+  y: px(174),
+  w: px(480),
+  h: px(28),
+  color: COLORS.GREEN,
+  text_size: px(28),
+  align_h: align.CENTER_H,
+  align_v: align.CENTER_V,
+  text_style: text_style.NONE,
 };
 
 export const EMPTY_STYLE = {
   x: px(0),
-  y: px(184),
+  y: px(208),
   w: px(480),
   h: px(30),
   color: COLORS.TEXT,
@@ -206,7 +218,7 @@ export const EMPTY_STYLE = {
 
 export const EMPTY_SUB_STYLE = {
   x: px(68),
-  y: px(220),
+  y: px(242),
   w: px(344),
   h: px(36),
   color: COLORS.MUTED,
@@ -214,4 +226,16 @@ export const EMPTY_SUB_STYLE = {
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.WRAP,
+};
+
+export const EMPTY_BACK_BTN_STYLE = {
+  x: px(126),
+  y: px(366),
+  w: px(228),
+  h: px(38),
+  radius: px(19),
+  normal_color: COLORS.SURFACE,
+  press_color: COLORS.SURFACE_2,
+  text_size: px(16),
+  text: "Back",
 };

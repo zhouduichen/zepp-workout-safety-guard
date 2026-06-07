@@ -32,14 +32,32 @@ export const PAGE_INDICATOR_STYLE = {
   text_style: text_style.NONE,
 };
 
-export function PROGRESS_DOT_STYLE(index, active) {
+export const PROGRESS_TRACK_STYLE = {
+  x: px(106),
+  y: px(52),
+  w: px(178),
+  h: px(10),
+  radius: px(5),
+  color: COLORS.STROKE,
+};
+
+export function PROGRESS_FILL_STYLE(step, total) {
+  const progress = Math.max(1, Math.min(total, step + 1));
   return {
-    x: px(104 + index * 24),
-    y: px(52),
-    w: active ? px(18) : px(8),
-    h: px(8),
-    radius: px(4),
-    color: active ? COLORS.GREEN : COLORS.STROKE,
+    ...PROGRESS_TRACK_STYLE,
+    w: Math.round(px(178) * progress / total),
+    color: COLORS.GREEN,
+  };
+}
+
+export function PROGRESS_CAP_STYLE(step, total) {
+  return {
+    x: px(106 + step * 178 / total - 1),
+    y: px(51),
+    w: px(3),
+    h: px(12),
+    radius: px(2),
+    color: COLORS.BACKGROUND,
   };
 }
 

@@ -6,6 +6,7 @@
  */
 
 import { createWidget, deleteWidget, widget, prop } from "@zos/ui";
+import { px } from "@zos/utils";
 import * as Styles from "zosLoader:./onboarding.[pf].layout.js";
 import * as Common from "zosLoader:./../common.[pf].layout.js";
 import { push } from "@zos/router";
@@ -129,11 +130,14 @@ Page({
     });
     this.state.widgets.pageIndicator.setEnable(false);
 
-    for (let i = 0; i < TOTAL_STEPS; i++) {
-      this._addDecoration(createWidget(widget.FILL_RECT, Styles.PROGRESS_DOT_STYLE(
-        i,
-        i <= this.state.currentStep,
-      )));
+    this._addDecoration(createWidget(widget.FILL_RECT, Styles.PROGRESS_TRACK_STYLE));
+    this._addDecoration(createWidget(widget.FILL_RECT, Styles.PROGRESS_FILL_STYLE(
+      this.state.currentStep,
+      TOTAL_STEPS,
+    )));
+
+    for (let i = 1; i < TOTAL_STEPS; i++) {
+      this._addDecoration(createWidget(widget.FILL_RECT, Styles.PROGRESS_CAP_STYLE(i, TOTAL_STEPS)));
     }
   },
 

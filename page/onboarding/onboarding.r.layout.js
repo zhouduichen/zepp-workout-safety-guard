@@ -23,7 +23,7 @@ export const COLORS = {
 
 export const PAGE_INDICATOR_STYLE = {
   x: px(0),
-  y: px(30),
+  y: px(28),
   w: px(480),
   h: px(22),
   color: COLORS.MUTED,
@@ -33,29 +33,47 @@ export const PAGE_INDICATOR_STYLE = {
   text_style: text_style.NONE,
 };
 
-export function PROGRESS_DOT_STYLE(index, active) {
+export const PROGRESS_TRACK_STYLE = {
+  x: px(150),
+  y: px(60),
+  w: px(180),
+  h: px(10),
+  radius: px(5),
+  color: COLORS.STROKE,
+};
+
+export function PROGRESS_FILL_STYLE(step, total) {
+  const progress = Math.max(1, Math.min(total, step + 1));
   return {
-    x: px(146 + index * 27),
-    y: px(60),
-    w: active ? px(18) : px(8),
-    h: px(8),
-    radius: px(4),
-    color: active ? COLORS.GREEN : COLORS.STROKE,
+    ...PROGRESS_TRACK_STYLE,
+    w: Math.round(px(180) * progress / total),
+    color: COLORS.GREEN,
+  };
+}
+
+export function PROGRESS_CAP_STYLE(step, total) {
+  return {
+    x: px(150 + step * 180 / total - 1),
+    y: px(59),
+    w: px(3),
+    h: px(12),
+    radius: px(2),
+    color: COLORS.BACKGROUND,
   };
 }
 
 export const CARD_STYLE = {
-  x: px(48),
+  x: px(58),
   y: px(88),
-  w: px(384),
+  w: px(364),
   h: px(236),
   radius: px(28),
 };
 
 export const TITLE_STYLE = {
-  x: px(76),
+  x: px(86),
   y: px(116),
-  w: px(328),
+  w: px(308),
   h: px(38),
   color: COLORS.TEXT,
   text_size: px(26),
@@ -65,9 +83,9 @@ export const TITLE_STYLE = {
 };
 
 export const BODY_STYLE = {
-  x: px(76),
+  x: px(86),
   y: px(168),
-  w: px(328),
+  w: px(308),
   h: px(134),
   color: COLORS.MUTED,
   text_size: px(18),
@@ -118,11 +136,11 @@ export const COUNTDOWN_LABEL_STYLE = {
 };
 
 export const BTN_PRIMARY_STYLE = {
-  x: px(58),
-  y: px(382),
-  w: px(364),
-  h: px(46),
-  radius: px(23),
+  x: px(80),
+  y: px(358),
+  w: px(320),
+  h: px(44),
+  radius: px(22),
   normal_color: COLORS.GREEN,
   press_color: 0x28b63d,
   text_size: px(19),
@@ -130,11 +148,11 @@ export const BTN_PRIMARY_STYLE = {
 };
 
 export const BTN_CANCEL_STYLE = {
-  x: px(100),
-  y: px(436),
-  w: px(280),
-  h: px(32),
-  radius: px(16),
+  x: px(136),
+  y: px(416),
+  w: px(208),
+  h: px(30),
+  radius: px(15),
   normal_color: COLORS.SURFACE,
   press_color: COLORS.SURFACE_2,
   text_size: px(15),

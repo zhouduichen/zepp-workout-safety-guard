@@ -192,9 +192,21 @@ export const EMPTY_CARD_STYLE = {
   radius: px(22),
 };
 
+export const EMPTY_CHECK_STYLE = {
+  x: px(0),
+  y: px(150),
+  w: px(390),
+  h: px(26),
+  color: COLORS.GREEN,
+  text_size: px(26),
+  align_h: align.CENTER_H,
+  align_v: align.CENTER_V,
+  text_style: text_style.NONE,
+};
+
 export const EMPTY_STYLE = {
   x: px(0),
-  y: px(162),
+  y: px(178),
   w: px(390),
   h: px(28),
   color: COLORS.TEXT,
@@ -206,7 +218,7 @@ export const EMPTY_STYLE = {
 
 export const EMPTY_SUB_STYLE = {
   x: px(46),
-  y: px(196),
+  y: px(210),
   w: px(298),
   h: px(32),
   color: COLORS.MUTED,
@@ -214,4 +226,16 @@ export const EMPTY_SUB_STYLE = {
   align_h: align.CENTER_H,
   align_v: align.CENTER_V,
   text_style: text_style.WRAP,
+};
+
+export const EMPTY_BACK_BTN_STYLE = {
+  x: px(80),
+  y: px(354),
+  w: px(230),
+  h: px(40),
+  radius: px(20),
+  normal_color: COLORS.SURFACE,
+  press_color: COLORS.SURFACE_2,
+  text_size: px(16),
+  text: "Back",
 };

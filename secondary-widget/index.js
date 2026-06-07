@@ -45,26 +45,26 @@ SecondaryWidget({
       y: px(0),
       w: px(200),
       h: px(180),
-      radius: px(24),
+      radius: px(22),
       color: COLORS.BACKGROUND,
     })
 
     createWidget(widget.FILL_RECT, {
-      x: px(10),
-      y: px(8),
-      w: px(180),
-      h: px(164),
-      radius: px(22),
+      x: px(8),
+      y: px(6),
+      w: px(184),
+      h: px(168),
+      radius: px(24),
       color: COLORS.SURFACE,
     })
 
     const title = createWidget(widget.TEXT, {
       x: px(22),
-      y: px(18),
-      w: px(156),
+      y: px(16),
+      w: px(128),
       h: px(24),
       color: COLORS.TEXT,
-      text_size: px(17),
+      text_size: px(16),
       align_h: align.LEFT,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
@@ -72,9 +72,18 @@ SecondaryWidget({
     })
     title.setEnable(false)
 
+    createWidget(widget.FILL_RECT, {
+      x: px(164),
+      y: px(24),
+      w: px(8),
+      h: px(8),
+      radius: px(4),
+      color: ringColor,
+    })
+
     createWidget(widget.ARC, {
       x: px(24),
-      y: px(52),
+      y: px(54),
       w: px(58),
       h: px(58),
       radius: px(29),
@@ -86,7 +95,7 @@ SecondaryWidget({
 
     createWidget(widget.ARC, {
       x: px(24),
-      y: px(52),
+      y: px(54),
       w: px(58),
       h: px(58),
       radius: px(29),
@@ -96,13 +105,27 @@ SecondaryWidget({
       line_width: px(5),
     })
 
+    const ringLabel = createWidget(widget.TEXT, {
+      x: px(24),
+      y: px(73),
+      w: px(58),
+      h: px(20),
+      color: ringColor,
+      text_size: px(13),
+      align_h: align.CENTER_H,
+      align_v: align.CENTER_V,
+      text_style: text_style.NONE,
+      text: this.state.guardEnabled ? 'ON' : 'SET',
+    })
+    ringLabel.setEnable(false)
+
     const stateText = createWidget(widget.TEXT, {
       x: px(96),
-      y: px(54),
-      w: px(76),
+      y: px(56),
+      w: px(82),
       h: px(24),
       color: ringColor,
-      text_size: px(20),
+      text_size: px(19),
       align_h: align.LEFT,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
@@ -112,8 +135,8 @@ SecondaryWidget({
 
     const phoneText = createWidget(widget.TEXT, {
       x: px(96),
-      y: px(82),
-      w: px(76),
+      y: px(84),
+      w: px(82),
       h: px(20),
       color: COLORS.MUTED,
       text_size: px(13),
@@ -125,18 +148,18 @@ SecondaryWidget({
     phoneText.setEnable(false)
 
     createWidget(widget.FILL_RECT, {
-      x: px(22),
+      x: px(20),
       y: px(124),
-      w: px(156),
+      w: px(160),
       h: px(36),
       radius: px(18),
       color: COLORS.RED,
     })
 
     const helpText = createWidget(widget.TEXT, {
-      x: px(22),
+      x: px(20),
       y: px(128),
-      w: px(156),
+      w: px(160),
       h: px(28),
       color: COLORS.TEXT,
       text_size: px(16),
