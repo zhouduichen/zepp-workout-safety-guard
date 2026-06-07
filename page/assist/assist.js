@@ -21,6 +21,45 @@ function parseParams(params) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Localization
+// ---------------------------------------------------------------------------
+const ZH = Object.freeze({
+  TITLE: "运动求助",
+  COUNTDOWN_LABEL: "秒后自动联系",
+  ONLINE: "在线",
+  OFFLINE: "离线",
+  CANCEL_BTN: "我安全了",
+  CONTACT_BTN: "立即联系",
+  PHONE_BTN: "打开电话",
+  CONFIRM_TITLE: "确认安全？",
+  CONFIRM_SUB: "取消自动联系，返回守护。",
+  QUEUED: "已排队",
+  CLOSE: "关闭",
+  CANCELLED: "已取消",
+  GPS_READY: "定位就绪",
+  HELP_SENT: "求助已发出",
+});
+
+const EN = Object.freeze({
+  TITLE: "Workout Help",
+  COUNTDOWN_LABEL: "s to auto contact",
+  ONLINE: "Online",
+  OFFLINE: "Offline",
+  CANCEL_BTN: "I'm safe",
+  CONTACT_BTN: "Contact now",
+  PHONE_BTN: "Open phone",
+  CONFIRM_TITLE: "Confirm safe?",
+  CONFIRM_SUB: "Cancel auto contact and return to guard.",
+  QUEUED: "Queued",
+  CLOSE: "Close",
+  CANCELLED: "Cancelled",
+  GPS_READY: "GPS ready",
+  HELP_SENT: "Help queued",
+});
+
+const i18n = ZH;
+
 function createStoragePort() {
   return { loadOutbox, saveOutbox, loadEventHistory, saveEventHistory };
 }
@@ -47,6 +86,7 @@ Page({
     _confirmDialog: null,
     _confirmingSafe: false,
     _leaving: false,
+    _helpSending: false,
   },
 
   onInit(params) {
@@ -64,7 +104,7 @@ Page({
 
     this.state._title = createWidget(widget.TEXT, {
       ...Styles.TITLE_STYLE,
-      text: "Workout Help",
+      text: i18n.TITLE,
     });
 
     createWidget(widget.FILL_RECT, {
@@ -88,32 +128,32 @@ Page({
 
     this.state._countdownLabel = createWidget(widget.TEXT, {
       ...Styles.COUNTDOWN_LABEL_STYLE,
-      text: "30s to auto contact",
+      text: `30${i18n.COUNTDOWN_LABEL}`,
     });
     this.state._countdownLabel.setEnable(false);
 
     this.state._connLabel = createWidget(widget.TEXT, {
       ...Styles.CONN_LABEL_STYLE,
       color: this.state.phoneOnline ? Styles.COLORS.GREEN : Styles.COLORS.ORANGE,
-      text: this.state.phoneOnline ? "Online" : "Offline",
+      text: this.state.phoneOnline ? i18n.ONLINE : i18n.OFFLINE,
     });
 
     this.state._cancelBtn = createWidget(widget.BUTTON, {
       ...Styles.CANCEL_BTN_STYLE,
-      text: "I'm safe",
+      text: i18n.CANCEL_BTN,
       click_func: () => this._onCancelTap(),
     });
 
     this.state._contactBtn = createWidget(widget.BUTTON, {
       ...Styles.HELP_BTN_STYLE,
-      text: "Contact now",
+      text: i18n.CONTACT_BTN,
       click_func: () => this._onHelpNow(),
     });
 
     if (this.state.canPhone) {
       this.state._phoneBtn = createWidget(widget.BUTTON, {
         ...Styles.PHONE_BTN_STYLE,
-        text: "Open phone",
+        text: i18n.PHONE_BTN,
         click_func: () => this._onPhoneCall(),
       });
     }
@@ -126,8 +166,8 @@ Page({
   _createConfirmDialog() {
     try {
       this.state._confirmDialog = createModal({
-        content: "Confirm safe?",
-        subtitle: "Cancel auto contact and return to guard.",
+        content: i18n.CONFIRM_TITLE,
+        subtitle: i18n.CONFIRM_SUB,
         autoHide: false,
         show: false,
         onClick: (keyObj) => {
@@ -197,7 +237,7 @@ Page({
         if (this.state._assistController) {
           this.state._assistController.locationUpdate(position.lat, position.lng);
         }
-        this._setWidgetText(this.state._connLabel, "GPS ready");
+        this._setWidgetText(this.state._connLabel, i18n.GPS_READY);
         this._stopGps();
       };
 
@@ -257,12 +297,13 @@ Page({
   },
 
   _onHelpSent(payload) {
+    this.state._helpSending = false;
     try {
       this.state._assistSession.sendHelp(payload);
     } catch {}
-    this._setWidgetText(this.state._connLabel, "Queued");
+    this._setWidgetText(this.state._connLabel, i18n.QUEUED);
     this._setEnabled(this.state._contactBtn, false);
-    this._setWidgetText(this.state._cancelBtn, "Close");
+    this._setWidgetText(this.state._cancelBtn, i18n.CLOSE);
     this._startGps();
   },
 
@@ -304,16 +345,22 @@ Page({
   _onAbortCancel() {
     this.state._assistController?.abortCancel();
     this.state._confirmingSafe = false;
+    this.state._helpSending = false;
     this._setEnabled(this.state._cancelBtn, true);
     this._setEnabled(this.state._contactBtn, true);
     this._setEnabled(this.state._phoneBtn, true);
   },
 
   _onHelpNow() {
+    if (this.state._helpSending || this.state._leaving) return;
+    this.state._helpSending = true;
+    this._setEnabled(this.state._contactBtn, false);
+    this._setEnabled(this.state._cancelBtn, false);
     this.state._assistController?.helpNow();
   },
 
   _onPhoneCall() {
+    if (this.state._leaving) return;
     try {
       const { launchApp, SYSTEM_APP_PHONE } = require("@zos/router");
       launchApp({ appId: SYSTEM_APP_PHONE });
@@ -322,8 +369,8 @@ Page({
 
   _finishCancelled() {
     this._stopGps();
-    this._setWidgetText(this.state._connLabel, "Cancelled");
-    this._setWidgetText(this.state._cancelBtn, "Close");
+    this._setWidgetText(this.state._connLabel, i18n.CANCELLED);
+    this._setWidgetText(this.state._cancelBtn, i18n.CLOSE);
     this._setEnabled(this.state._cancelBtn, true);
     this._hideConfirmDialog();
     this._leaveAssistPageSoon();
@@ -332,7 +379,7 @@ Page({
   _updateCountdownDisplay() {
     const remaining = Math.max(0, this.state.remaining);
     this._setWidgetText(this.state._countdown, String(remaining));
-    this._setWidgetText(this.state._countdownLabel, remaining > 0 ? `${remaining}s to auto contact` : "Help queued");
+    this._setWidgetText(this.state._countdownLabel, remaining > 0 ? `${remaining}${i18n.COUNTDOWN_LABEL}` : i18n.HELP_SENT);
     if (this.state._countdownArc) {
       try {
         this.state._countdownArc.setProperty(prop.MORE, {

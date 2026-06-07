@@ -22,6 +22,33 @@ const COLORS = {
   BLUE: 0x0a84ff,
 }
 
+// ---------------------------------------------------------------------------
+// Localization
+// ---------------------------------------------------------------------------
+const ZH = Object.freeze({
+  TITLE: "运动异常守护",
+  RING_ON: "开",
+  RING_SET: "设置",
+  STATE_READY: "就绪",
+  STATE_SETUP: "设置",
+  PHONE_ONLINE: "手机在线",
+  LOCAL_ALERT: "本地警报",
+  HELP_BTN: "我感觉不适",
+})
+
+const EN = Object.freeze({
+  TITLE: "Fitness Guard",
+  RING_ON: "ON",
+  RING_SET: "SET",
+  STATE_READY: "Ready",
+  STATE_SETUP: "Setup",
+  PHONE_ONLINE: "Phone online",
+  LOCAL_ALERT: "Local alert",
+  HELP_BTN: "I Feel Unwell",
+})
+
+const i18n = ZH
+
 const STATE_UNKNOWN = 'STATE_UNKNOWN'
 
 SecondaryWidget({
@@ -68,7 +95,7 @@ SecondaryWidget({
       align_h: align.LEFT,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
-      text: 'Fitness Guard',
+      text: i18n.TITLE,
     })
     title.setEnable(false)
 
@@ -115,7 +142,7 @@ SecondaryWidget({
       align_h: align.CENTER_H,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
-      text: this.state.guardEnabled ? 'ON' : 'SET',
+      text: this.state.guardEnabled ? i18n.RING_ON : i18n.RING_SET,
     })
     ringLabel.setEnable(false)
 
@@ -129,7 +156,7 @@ SecondaryWidget({
       align_h: align.LEFT,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
-      text: this.state.guardEnabled ? 'Ready' : 'Setup',
+      text: this.state.guardEnabled ? i18n.STATE_READY : i18n.STATE_SETUP,
     })
     stateText.setEnable(false)
 
@@ -143,7 +170,7 @@ SecondaryWidget({
       align_h: align.LEFT,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
-      text: this.state.phoneOnline ? 'Phone online' : 'Local alert',
+      text: this.state.phoneOnline ? i18n.PHONE_ONLINE : i18n.LOCAL_ALERT,
     })
     phoneText.setEnable(false)
 
@@ -166,7 +193,7 @@ SecondaryWidget({
       align_h: align.CENTER_H,
       align_v: align.CENTER_V,
       text_style: text_style.NONE,
-      text: 'I Feel Unwell',
+      text: i18n.HELP_BTN,
     })
     helpText.setEnable(false)
   },

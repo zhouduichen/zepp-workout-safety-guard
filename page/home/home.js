@@ -18,6 +18,16 @@ import { LocalStorage } from "@zos/storage";
 
 const ZH = Object.freeze({
   TITLE: "运动异常守护",
+  STATUS_ACTIVE: "守护中",
+  STATUS_SETUP: "未设置",
+  GUARD_SCORE: "守护评分",
+  STAT_CONTACTS: "联系人",
+  STAT_QUEUE: "待发送",
+  STAT_PHONE: "手机",
+  STAT_SERVICE: "服务",
+  ON: "在线",
+  OFF: "离线",
+  READINESS: "就绪状态",
   GUARD_ENABLED: "自动守护：已开启",
   GUARD_DISABLED: "自动守护：未开启",
   REMOTE_ONLINE: "远程求助：手机在线",
@@ -39,6 +49,16 @@ const ZH = Object.freeze({
 
 const EN = Object.freeze({
   TITLE: "Workout Safety Guard",
+  STATUS_ACTIVE: "ACTIVE",
+  STATUS_SETUP: "SETUP",
+  GUARD_SCORE: "Guard Score",
+  STAT_CONTACTS: "Contacts",
+  STAT_QUEUE: "Queue",
+  STAT_PHONE: "Phone",
+  STAT_SERVICE: "Service",
+  ON: "On",
+  OFF: "Off",
+  READINESS: "Readiness",
   GUARD_ENABLED: "Auto Guard: Enabled",
   GUARD_DISABLED: "Auto Guard: Disabled",
   REMOTE_ONLINE: "Remote Help: Online",
@@ -54,7 +74,7 @@ const EN = Object.freeze({
   BTN_ONBOARDING: "Start Guide",
 });
 
-const i18n = EN;
+const i18n = ZH;
 
 Page({
   state: {
@@ -163,14 +183,14 @@ Page({
 
     s.widgets.title = createWidget(widget.TEXT, {
       ...Styles.TITLE_STYLE,
-      text: "Fitness Guard",
+      text: i18n.TITLE,
     });
     s.widgets.title.setEnable(false);
 
     s.widgets.statusPill = createWidget(widget.TEXT, {
       ...Styles.STATUS_PILL_TEXT_STYLE,
       color: s.guardEnabled ? colors.GREEN : colors.ORANGE,
-      text: s.guardEnabled ? "ACTIVE" : "SETUP",
+      text: s.guardEnabled ? i18n.STATUS_ACTIVE : i18n.STATUS_SETUP,
     });
     s.widgets.statusPill.setEnable(false);
 
@@ -192,18 +212,18 @@ Page({
 
     s.widgets.scoreLabel = createWidget(widget.TEXT, {
       ...Styles.SCORE_LABEL_STYLE,
-      text: "Guard Score",
+      text: i18n.GUARD_SCORE,
     });
     s.widgets.scoreLabel.setEnable(false);
 
-    this._createStat(0, `${s.contactCount}/3`, "Contacts", s.contactCount > 0 ? colors.GREEN : colors.ORANGE);
-    this._createStat(1, String(s.outboxCount), "Queue", s.outboxCount > 0 ? colors.RED : colors.GREEN);
-    this._createStat(2, s.phoneOnline ? "On" : "Off", "Phone", s.phoneOnline ? colors.GREEN : colors.ORANGE);
-    this._createStat(3, s.guardEnabled ? "On" : "Off", "Service", s.guardEnabled ? colors.BLUE : colors.DIM);
+    this._createStat(0, `${s.contactCount}/3`, i18n.STAT_CONTACTS, s.contactCount > 0 ? colors.GREEN : colors.ORANGE);
+    this._createStat(1, String(s.outboxCount), i18n.STAT_QUEUE, s.outboxCount > 0 ? colors.RED : colors.GREEN);
+    this._createStat(2, s.phoneOnline ? i18n.ON : i18n.OFF, i18n.STAT_PHONE, s.phoneOnline ? colors.GREEN : colors.ORANGE);
+    this._createStat(3, s.guardEnabled ? i18n.ON : i18n.OFF, i18n.STAT_SERVICE, s.guardEnabled ? colors.BLUE : colors.DIM);
 
     s.widgets.statusOutbox = createWidget(widget.TEXT, {
       ...Styles.TREND_LABEL_STYLE,
-      text: "Readiness",
+      text: i18n.READINESS,
     });
     s.widgets.statusOutbox.setEnable(false);
 

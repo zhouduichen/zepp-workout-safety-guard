@@ -11,9 +11,62 @@ import {
 } from "../../src/device/storage.js";
 import { resolveLatestHelp } from "../../src/pages/assist-session.js";
 
+// ---------------------------------------------------------------------------
+// Localization
+// ---------------------------------------------------------------------------
+const ZH = Object.freeze({
+  TITLE: "事件历史",
+  COUNT: "{0} 个事件",
+  TOTAL: "总计",
+  RESOLVED: "已解决",
+  OPEN: "未解决",
+  NO_EVENTS: "暂无事件",
+  NO_EVENTS_SUB: "演练和求助事件将显示在此处。",
+  MARK_SAFE: "标记安全",
+  CLEAR: "清空",
+  BACK: "返回",
+  STATUS_RESOLVED: "已解决",
+  STATUS_ACKED: "已发送，等待中",
+  STATUS_QUEUED: "已排队",
+  STATUS_OPEN: "待处理",
+  TRIGGER_HIGH_RISK: "自动异常",
+  TRIGGER_MANUAL: "手动求助",
+  TRIGGER_DEFAULT: "求助事件",
+  TAG_GPS_REPLAY: "GPS 重发",
+  TAG_GPS: "GPS",
+  TAG_REPLAY: "重发",
+});
+
+const EN = Object.freeze({
+  TITLE: "History",
+  COUNT: "{0} events",
+  TOTAL: "Total",
+  RESOLVED: "Resolved",
+  OPEN: "Open",
+  NO_EVENTS: "No events yet",
+  NO_EVENTS_SUB: "Practice and help events will appear here.",
+  MARK_SAFE: "Mark Safe",
+  CLEAR: "Clear",
+  BACK: "Back",
+  STATUS_RESOLVED: "Resolved",
+  STATUS_ACKED: "Sent, waiting",
+  STATUS_QUEUED: "Queued",
+  STATUS_OPEN: "Open",
+  TRIGGER_HIGH_RISK: "Auto anomaly",
+  TRIGGER_MANUAL: "Manual help",
+  TRIGGER_DEFAULT: "Help event",
+  TAG_GPS_REPLAY: "GPS Replay",
+  TAG_GPS: "GPS",
+  TAG_REPLAY: "Replay",
+});
+
+const i18n = ZH;
+
 Page({
   state: {
     widgets: [],
+    _clearing: false,
+    _markingSafe: false,
   },
 
   build() {
@@ -30,16 +83,16 @@ Page({
 
     this.track(createWidget(widget.TEXT, {
       ...Styles.TITLE_STYLE,
-      text: "History",
+      text: i18n.TITLE,
     }));
     this.track(createWidget(widget.TEXT, {
       ...Styles.COUNT_STYLE,
-      text: `${events.length} events`,
+      text: i18n.COUNT.replace("{0}", String(events.length)),
     }));
 
-    this.createSummary(0, String(events.length), "Total", Styles.COLORS.BLUE);
-    this.createSummary(1, String(resolved), "Resolved", Styles.COLORS.GREEN);
-    this.createSummary(2, String(unresolved), "Open", unresolved > 0 ? Styles.COLORS.ORANGE : Styles.COLORS.MUTED);
+    this.createSummary(0, String(events.length), i18n.TOTAL, Styles.COLORS.BLUE);
+    this.createSummary(1, String(resolved), i18n.RESOLVED, Styles.COLORS.GREEN);
+    this.createSummary(2, String(unresolved), i18n.OPEN, unresolved > 0 ? Styles.COLORS.ORANGE : Styles.COLORS.MUTED);
 
     if (events.length === 0) {
       this.drawCard(Styles.EMPTY_CARD_STYLE, Styles.COLORS.SURFACE);
@@ -49,11 +102,11 @@ Page({
       }));
       this.track(createWidget(widget.TEXT, {
         ...Styles.EMPTY_STYLE,
-        text: "No events yet",
+        text: i18n.NO_EVENTS,
       }));
       this.track(createWidget(widget.TEXT, {
         ...Styles.EMPTY_SUB_STYLE,
-        text: "Practice and help events will appear here.",
+        text: i18n.NO_EVENTS_SUB,
       }));
     } else {
       const visibleEvents = events.slice(0, Styles.MAX_VISIBLE_EVENTS);
@@ -65,7 +118,7 @@ Page({
     if (unresolved > 0) {
       this.track(createWidget(widget.BUTTON, {
         ...Styles.MARK_SAFE_BTN_STYLE,
-        text: "Mark Safe",
+        text: i18n.MARK_SAFE,
         click_func: () => this._onMarkSafe(),
       }));
     }
@@ -73,19 +126,19 @@ Page({
     if (events.length === 0) {
       this.track(createWidget(widget.BUTTON, {
         ...Styles.EMPTY_BACK_BTN_STYLE,
-        text: "Back",
+        text: i18n.BACK,
         click_func: () => this._onBack(),
       }));
     } else {
       this.track(createWidget(widget.BUTTON, {
         ...Styles.CLEAR_BTN_STYLE,
-        text: "Clear",
+        text: i18n.CLEAR,
         click_func: () => this._onClearHistory(),
       }));
 
       this.track(createWidget(widget.BUTTON, {
         ...Styles.BACK_BTN_STYLE,
-        text: "Back",
+        text: i18n.BACK,
         click_func: () => this._onBack(),
       }));
     }
@@ -164,22 +217,22 @@ Page({
   },
 
   statusLabel(status) {
-    if (status === "resolved") return "Resolved";
-    if (status === "acknowledged") return "Sent, waiting";
-    if (status === "queued") return "Queued";
-    return "Open";
+    if (status === "resolved") return i18n.STATUS_RESOLVED;
+    if (status === "acknowledged") return i18n.STATUS_ACKED;
+    if (status === "queued") return i18n.STATUS_QUEUED;
+    return i18n.STATUS_OPEN;
   },
 
   triggerLabel(trigger) {
-    if (trigger === "automatic_high_risk") return "Auto anomaly";
-    if (trigger === "manual") return "Manual help";
-    return "Help event";
+    if (trigger === "automatic_high_risk") return i18n.TRIGGER_HIGH_RISK;
+    if (trigger === "manual") return i18n.TRIGGER_MANUAL;
+    return i18n.TRIGGER_DEFAULT;
   },
 
   eventTag(evt) {
-    if (evt.hasLocation && evt.replayed) return "GPS Replay";
-    if (evt.hasLocation) return "GPS";
-    if (evt.replayed) return "Replay";
+    if (evt.hasLocation && evt.replayed) return i18n.TAG_GPS_REPLAY;
+    if (evt.hasLocation) return i18n.TAG_GPS;
+    if (evt.replayed) return i18n.TAG_REPLAY;
     return "";
   },
 
@@ -189,6 +242,8 @@ Page({
   },
 
   _onMarkSafe() {
+    if (this.state._markingSafe) return;
+    this.state._markingSafe = true;
     resolveLatestHelp({
       storage: { loadOutbox, saveOutbox, loadEventHistory, saveEventHistory },
       now: () => Date.now(),
@@ -197,6 +252,8 @@ Page({
   },
 
   _onClearHistory() {
+    if (this.state._clearing) return;
+    this.state._clearing = true;
     clearEventHistory();
     this.build();
   },

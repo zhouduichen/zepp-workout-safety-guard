@@ -12,7 +12,40 @@ import * as Common from "zosLoader:./../common.[pf].layout.js";
 import { push } from "@zos/router";
 import { LocalStorage } from "@zos/storage";
 
-const i18n = Object.freeze({
+// ---------------------------------------------------------------------------
+// Localization
+// ---------------------------------------------------------------------------
+const ZH = Object.freeze({
+  STEP_LABEL: "步骤 {0} / 8",
+  TITLE_1: "运动异常辅助",
+  BODY_1: "本功能在运动期间提供守护，非医疗设备，无法检测紧急状况。",
+  TITLE_2: "后台权限",
+  BODY_2: "后台权限让守护在运动中保持活跃，处理过程在手表本地完成。",
+  TITLE_3: "仅求助页使用定位",
+  BODY_3: "仅当您主动打开求助页时获取位置，求助流程结束后即停止。",
+  TITLE_4: "手机连接",
+  BODY_4: "远程通知需要手机在附近且连接正常。离线时保持本地警报并排队等待。",
+  TITLE_5: "离线重发",
+  BODY_5: "手机重新连接后，排队的求助事件将以唯一 ID 重发一次，避免重复。",
+  TITLE_6: "联系人设置",
+  BODY_6: "联系人信息保存在手机侧，手表仅显示已配置的联系人数。",
+  TITLE_7: "演练要求",
+  BODY_7: "完成简短演练后方可启用守护，了解取消和联系操作。",
+  TITLE_8: "演练",
+  BODY_8_PRACTICE: "此为本地模拟，不会联系任何人。",
+  COUNTDOWN_LABEL: "演练倒计时",
+  CANCEL_BTN: "取消演练",
+  CONTACT_BTN: "演练联系",
+  GRANT_PERMISSION: "授予后台权限",
+  NEXT_BTN: "下一步",
+  START_BTN: "开始演练",
+  DONE_BTN: "启用守护",
+  PERMISSION_PROMPT: "请授予后台权限以启用自动守护。",
+  PRACTICE_DONE: "演练完成\n可启用守护",
+  LATER: "稍后",
+});
+
+const EN = Object.freeze({
   STEP_LABEL: "Step {0} / 8",
   TITLE_1: "Movement anomaly assistance",
   BODY_1: "This guard helps during workouts. It is not a medical device and cannot detect emergencies.",
@@ -38,7 +71,11 @@ const i18n = Object.freeze({
   START_BTN: "Start drill",
   DONE_BTN: "Enable guard",
   PERMISSION_PROMPT: "Grant background permission to enable auto guard.",
+  PRACTICE_DONE: "Practice complete\nGuard can be enabled",
+  LATER: "Later",
 });
+
+const i18n = ZH;
 
 const STEPS = [
   { title: i18n.TITLE_1, body: i18n.BODY_1 },
@@ -238,7 +275,7 @@ Page({
 
     s.widgets.body = createWidget(widget.TEXT, {
       ...Styles.BODY_STYLE,
-      text: "Practice complete\nGuard can be enabled",
+      text: i18n.PRACTICE_DONE,
     });
     s.widgets.body.setEnable(false);
 
@@ -268,6 +305,7 @@ Page({
 
   startPracticeDrill() {
     const s = this.state;
+    if (s.isPracticeRunning) return;
     s.isPracticeRunning = true;
     s.practiceSecondsRemaining = PRACTICE_DURATION_SEC;
     this.createUI();
