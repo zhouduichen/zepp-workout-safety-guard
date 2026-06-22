@@ -6,11 +6,12 @@
 |---|---|
 | 应用名称 | WorkoutSafetyGuard |
 | 版本 | 1.0.0 |
-| appId | 9999998 |
+| appId | 1116573 |
 | 目标 API | 3.0 |
-| 提交哈希 | `HEAD` (`codex/demo-alpha-review`) |
-| 构建时间 | 2026-06-07 12:15 |
-| 构建产物 | `dist/9999998-WorkoutSafetyGuard-1.0.0-20260607121516.zab` (858 KB) |
+| 提交哈希 | `2c2a3ee` (`codex/demo-alpha-review`) |
+| 构建时间 | 2026-06-22 22:21 |
+| 构建产物 | `dist/1116573-WorkoutSafetyGuard-1.0.0-20260622222102.zab` (957 KB) |
+| SHA-256 | `BED6659322E8F1FC2F28A55CE78843AAB9472D63265D688C17CC2BA140FCD128` |
 | 模拟器目标 | Amazfit Balance 2 |
 
 ## 包含模块
@@ -25,18 +26,19 @@
 - 设置页（手机端：联系人、阈值配置）
 - 12 个安全场景回归模拟器
 
-## 中文文案
+## 英文文案
 
-所有页面已使用中文文案（保留英文副本 `EN`，切换至 `const i18n = EN` 即可恢复）。
+手表页面、Secondary Widget、通知和手机设置页默认使用英文；安装包仅发布 `en-US` 元数据。
 
 ## 验证结果
 
 | 检查项 | 结果 |
 |---|---|
-| `npm test` | 169/169 通过 |
+| `npm test` | 174/174 通过 |
 | `npm run validate` | 通过 |
 | `node scripts/simulate-scenarios.mjs` | 12/12 场景通过 |
 | `zeus build` | 通过 |
+| 包内抽查 | 480x480 圆屏、390x450 方屏均仅含 `en-US` |
 
 ## 操作流畅度改进（本次新增）
 
@@ -56,7 +58,6 @@
 - **GPS**：仅在前台求助页运行，首次发送求助后再获取位置
 - **Secondary Widget**：在模拟器中行为有限
 - **后台传感器**：自动检测依赖真实心率、计步和佩戴传感器
-- **`.gitignore`**：包含未提交的无关修改
 
 ## 后续步骤
 
