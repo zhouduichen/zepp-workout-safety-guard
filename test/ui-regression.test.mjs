@@ -63,6 +63,8 @@ describe('watch UI regressions', () => {
     assert.equal(appConfig.defaultLanguage, 'en-US')
     assert.equal(appConfig.app.description, 'Workout Safety Guard')
     assert.equal(appConfig.i18n['en-US'].appName, 'Workout Safety Guard')
+    assert.deepEqual(Object.keys(appConfig.i18n), ['en-US'])
+    assert.doesNotMatch(JSON.stringify(appConfig.i18n), /\p{Script=Han}/u)
 
     const alerts = read('src/device/zepp-alerts.js')
     assert.match(alerts, /'Workout Safety Guard'/)
@@ -71,6 +73,11 @@ describe('watch UI regressions', () => {
     const settings = read('setting/index.js')
     assert.match(settings, /\['Personal information'\]/)
     assert.match(settings, /label: 'Emergency contact 1 name'/)
+  })
+
+  it('uses the portable Zeus release command', () => {
+    const packageConfig = JSON.parse(read('package.json'))
+    assert.equal(packageConfig.scripts.build, 'zeus build')
   })
 
   it('keeps every round-screen button inside the circular safe area', () => {

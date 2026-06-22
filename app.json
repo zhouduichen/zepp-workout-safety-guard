@@ -72,9 +72,6 @@
   "i18n": {
     "en-US": {
       "appName": "Workout Safety Guard"
-    },
-    "zh-CN": {
-      "appName": "运动异常守护"
     }
   },
   "defaultLanguage": "en-US"
