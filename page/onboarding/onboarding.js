@@ -75,7 +75,7 @@ const EN = Object.freeze({
   LATER: "Later",
 });
 
-const i18n = ZH;
+const i18n = EN;
 
 const STEPS = [
   { title: i18n.TITLE_1, body: i18n.BODY_1 },
@@ -287,7 +287,7 @@ Page({
 
     s.widgets.btnCancel = createWidget(widget.BUTTON, {
       ...Styles.BTN_CANCEL_STYLE,
-      text: "Later",
+      text: i18n.LATER,
       click_func: () => this.navigateToHome(),
     });
   },

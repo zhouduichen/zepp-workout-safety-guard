@@ -161,9 +161,9 @@ export const MARK_SAFE_BTN_STYLE = {
 };
 
 export const CLEAR_BTN_STYLE = {
-  x: px(116),
+  x: px(122),
   y: px(414),
-  w: px(112),
+  w: px(104),
   h: px(30),
   radius: px(15),
   normal_color: COLORS.SURFACE,
@@ -173,9 +173,9 @@ export const CLEAR_BTN_STYLE = {
 };
 
 export const BACK_BTN_STYLE = {
-  x: px(252),
+  x: px(254),
   y: px(414),
-  w: px(112),
+  w: px(104),
   h: px(30),
   radius: px(15),
   normal_color: COLORS.SURFACE,

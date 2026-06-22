@@ -29,27 +29,27 @@ export function createAlertsAdapter() {
         break
       case EffectType.NOTIFY_INTENSITY:
         notify(
-          '运动异常守护',
-          '心率持续偏高，建议降低运动强度',
+          'Workout Safety Guard',
+          'Heart rate remains high. Reduce workout intensity.',
           [
-            { title: '我已休息', param: JSON.stringify({ type: 'USER_REST_REQUESTED' }) },
+            { title: 'I have stopped', param: JSON.stringify({ type: 'USER_REST_REQUESTED' }) },
           ],
         )
         break
       case EffectType.NOTIFY_CONFIRMATION:
         notify(
-          '运动异常守护',
-          '检测到运动异常，你还好吗？',
+          'Workout Safety Guard',
+          'Are you okay?',
           [
-            { title: '我没事', param: JSON.stringify({ type: 'USER_SAFE_CONFIRMED' }) },
-            { title: '联系家人', param: JSON.stringify({ type: 'USER_HELP_NOW' }) },
+            { title: "I'm safe", param: JSON.stringify({ type: 'USER_SAFE_CONFIRMED' }) },
+            { title: 'Contact family', param: JSON.stringify({ type: 'USER_HELP_NOW' }) },
           ],
         )
         break
       case EffectType.NOTIFY_GUARD_PAUSED:
         notify(
-          '运动异常守护',
-          '守护已暂停',
+          'Workout Safety Guard',
+          'Guard paused',
           [],
         )
         break

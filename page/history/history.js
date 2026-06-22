@@ -60,7 +60,7 @@ const EN = Object.freeze({
   TAG_REPLAY: "Replay",
 });
 
-const i18n = ZH;
+const i18n = EN;
 
 Page({
   state: {

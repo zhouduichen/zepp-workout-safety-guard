@@ -47,7 +47,7 @@ const EN = Object.freeze({
   HELP_BTN: "I Feel Unwell",
 })
 
-const i18n = ZH
+const i18n = EN
 
 const STATE_UNKNOWN = 'STATE_UNKNOWN'
 

@@ -74,7 +74,7 @@ const EN = Object.freeze({
   BTN_ONBOARDING: "Start Guide",
 });
 
-const i18n = ZH;
+const i18n = EN;
 
 Page({
   state: {

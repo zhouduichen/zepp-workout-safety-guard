@@ -58,7 +58,7 @@ const EN = Object.freeze({
   HELP_SENT: "Help queued",
 });
 
-const i18n = ZH;
+const i18n = EN;
 
 function createStoragePort() {
   return { loadOutbox, saveOutbox, loadEventHistory, saveEventHistory };

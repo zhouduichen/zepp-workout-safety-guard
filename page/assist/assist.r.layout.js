@@ -92,7 +92,7 @@ export const COUNTDOWN_LABEL_STYLE = {
 
 export const CANCEL_BTN_STYLE = {
   x: px(92),
-  y: px(336),
+  y: px(328),
   w: px(296),
   h: px(44),
   radius: px(22),
@@ -103,9 +103,9 @@ export const CANCEL_BTN_STYLE = {
 };
 
 export const HELP_BTN_STYLE = {
-  x: px(92),
-  y: px(390),
-  w: px(296),
+  x: px(100),
+  y: px(380),
+  w: px(280),
   h: px(44),
   radius: px(22),
   normal_color: COLORS.RED,
@@ -115,9 +115,9 @@ export const HELP_BTN_STYLE = {
 };
 
 export const PHONE_BTN_STYLE = {
-  x: px(154),
-  y: px(440),
-  w: px(172),
+  x: px(160),
+  y: px(432),
+  w: px(160),
   h: px(28),
   radius: px(14),
   normal_color: COLORS.BLUE,

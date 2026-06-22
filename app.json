@@ -1,7 +1,7 @@
 {
   "configVersion": "v3",
   "app": {
-    "appId": 9999998,
+    "appId": 1116573,
     "appName": "WorkoutSafetyGuard",
     "appType": "app",
     "version": {
@@ -10,7 +10,7 @@
     },
     "icon": "icon.png",
     "vender": "zepp",
-    "description": "运动异常守护"
+    "description": "Workout Safety Guard"
   },
   "permissions": [
     "data:os.device.info",
@@ -70,9 +70,12 @@
     }
   },
   "i18n": {
+    "en-US": {
+      "appName": "Workout Safety Guard"
+    },
     "zh-CN": {
       "appName": "运动异常守护"
     }
   },
-  "defaultLanguage": "zh-CN"
+  "defaultLanguage": "en-US"
 }

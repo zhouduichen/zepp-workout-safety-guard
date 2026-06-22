@@ -44,19 +44,19 @@ AppSettingsPage({
       // =============================================================
       // Personalisation
       // =============================================================
-      Text({}, ['个人信息']),
+      Text({}, ['Personal information']),
 
       Input({
-        label: '昵称',
-        placeholder: '输入昵称',
+        label: 'Nickname',
+        placeholder: 'Enter nickname',
         value: getVal('nickname', ''),
         onChange: (v) => ss.setItem('nickname', v),
       }),
 
       // Age bracket: select from predefined ranges
-      Text({ style: { marginTop: '16px' } }, ['年龄范围']),
+      Text({ style: { marginTop: '16px' } }, ['Age range']),
       Select({
-        label: '选择年龄范围',
+        label: 'Select age range',
         value: getVal('age_bracket', '25-34'),
         options: [
           { label: '18-24', value: '18-24' },
@@ -72,22 +72,22 @@ AppSettingsPage({
       // =============================================================
       // Threshold Configuration
       // =============================================================
-      Text({ style: { marginTop: '24px' } }, ['阈值配置']),
+      Text({ style: { marginTop: '24px' } }, ['Thresholds']),
 
       Input({
-        label: '强度提醒阈值 (bpm)',
-        placeholder: '默认 170',
+        label: 'Intensity reminder (bpm)',
+        placeholder: 'Default 170',
         value: String(getNum('intensity_reminder_bpm', 170)),
         onChange: (v) => ss.setItem('intensity_reminder_bpm', Number(v) || 170),
       }),
 
       Text(
         { style: { marginTop: '8px', color: '#ff9800', fontSize: '12px' } },
-        ['测试配置 — 高危候选阈值 (bpm)'],
+        ['Test configuration - high-risk candidate threshold (bpm)'],
       ),
       Input({
-        label: '高危候选阈值',
-        placeholder: '默认 190',
+        label: 'High-risk candidate threshold',
+        placeholder: 'Default 190',
         value: String(getNum('high_risk_candidate_bpm', 190)),
         onChange: (v) => ss.setItem('high_risk_candidate_bpm', Number(v) || 190),
       }),
@@ -95,12 +95,12 @@ AppSettingsPage({
       // =============================================================
       // Emergency Contacts (max 3, phone-side only)
       // =============================================================
-      Text({ style: { marginTop: '24px' } }, ['紧急联系人 (最多3位)']),
+      Text({ style: { marginTop: '24px' } }, ['Emergency contacts (up to 3)']),
 
       // Contact 1
       Input({
-        label: '联系人 1 姓名',
-        placeholder: '姓名',
+        label: 'Emergency contact 1 name',
+        placeholder: 'Name',
         value: getVal('contact_1_name', ''),
         onChange: (v) => {
           ss.setItem('contact_1_name', v)
@@ -108,8 +108,8 @@ AppSettingsPage({
         },
       }),
       Input({
-        label: '联系人 1 电话',
-        placeholder: '电话号码',
+        label: 'Emergency contact 1 phone',
+        placeholder: 'Phone number',
         value: getVal('contact_1_phone', ''),
         onChange: (v) => {
           ss.setItem('contact_1_phone', v)
@@ -119,8 +119,8 @@ AppSettingsPage({
 
       // Contact 2
       Input({
-        label: '联系人 2 姓名',
-        placeholder: '姓名',
+        label: 'Emergency contact 2 name',
+        placeholder: 'Name',
         value: getVal('contact_2_name', ''),
         onChange: (v) => {
           ss.setItem('contact_2_name', v)
@@ -128,8 +128,8 @@ AppSettingsPage({
         },
       }),
       Input({
-        label: '联系人 2 电话',
-        placeholder: '电话号码',
+        label: 'Emergency contact 2 phone',
+        placeholder: 'Phone number',
         value: getVal('contact_2_phone', ''),
         onChange: (v) => {
           ss.setItem('contact_2_phone', v)
@@ -139,8 +139,8 @@ AppSettingsPage({
 
       // Contact 3
       Input({
-        label: '联系人 3 姓名',
-        placeholder: '姓名',
+        label: 'Emergency contact 3 name',
+        placeholder: 'Name',
         value: getVal('contact_3_name', ''),
         onChange: (v) => {
           ss.setItem('contact_3_name', v)
@@ -148,8 +148,8 @@ AppSettingsPage({
         },
       }),
       Input({
-        label: '联系人 3 电话',
-        placeholder: '电话号码',
+        label: 'Emergency contact 3 phone',
+        placeholder: 'Phone number',
         value: getVal('contact_3_phone', ''),
         onChange: (v) => {
           ss.setItem('contact_3_phone', v)
@@ -160,20 +160,20 @@ AppSettingsPage({
       // =============================================================
       // Feature Toggles
       // =============================================================
-      Text({ style: { marginTop: '24px' } }, ['功能开关']),
+      Text({ style: { marginTop: '24px' } }, ['Features']),
 
       Switch({
-        label: '离线本地警报',
+        label: 'Offline local alert',
         checked: getBool('offline_local_alert_enabled', true),
         onChange: (v) => ss.setItem('offline_local_alert_enabled', v),
       }),
 
       Text(
         { style: { marginTop: '8px', color: '#ff9800', fontSize: '12px' } },
-        ['此版本锁定为启用 — 演示调度器'],
+        ['Locked on in this version - demo dispatcher'],
       ),
       Switch({
-        label: '演示调度器',
+        label: 'Demo dispatcher',
         checked: true,
         disabled: true,
         onChange: () => {},
@@ -182,7 +182,7 @@ AppSettingsPage({
       ss.setItem('demo_dispatcher_enabled', true),
 
       Switch({
-        label: '训练已完成',
+        label: 'Training complete',
         checked: getBool('training_complete', false),
         onChange: (v) => ss.setItem('training_complete', v),
       }),
